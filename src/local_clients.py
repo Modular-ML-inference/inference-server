@@ -1,5 +1,10 @@
+import pickle
+
 import flwr as fl
 import tensorflow as tf
+from pymongo import MongoClient
+
+from config import DB_PORT
 
 
 async def start_client(id, config):
@@ -12,7 +17,13 @@ class LOKerasClient(fl.client.NumPyClient):
 
     def __init__(self, config):
         self.priv_config = config
-        if config.model_id == "base":
+        client = MongoClient(port=DB_PORT)
+        db = client.local
+        if db.models.find_one({"id" : config.model_id}):
+            result = db.models.find_one({"id" : config.model_id})
+            self.model = pickle.loads(result['model'])
+            self.model.__init__(config.shape, classes=config.num_classes, weights=None)
+        else:
             self.model = tf.keras.applications.MobileNetV2(config.shape, classes=config.num_classes, weights=None)
         self.model.compile(config.optimizer, config.eval_func, metrics=config.eval_metrics)
         (self.x_train, self.y_train), (self.x_test, self.y_test) = tf.keras.datasets.cifar10.load_data()
@@ -32,5 +43,7 @@ class LOKerasClient(fl.client.NumPyClient):
     def evaluate(self, parameters, config):
         self.model.set_weights(parameters)
         loss, metrics = self.model.evaluate(self.x_test, self.y_test)
+        if not isinstance(metrics, list):
+            metrics = [metrics]
         evaluations = {m: metrics[i] for i, m in enumerate(self.priv_config.eval_metrics)}
         return loss, len(self.x_test), evaluations

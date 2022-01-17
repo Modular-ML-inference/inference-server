@@ -37,7 +37,6 @@ def receive_conf(model: MLAlgorithm):
 # Receive any required data transformer for job with identified id
 @app.post("/job/status/{id}")
 def retrieve_status(id):
-    # TODO: understand who sends the transformer
     return "Receive transformer"
 
 
