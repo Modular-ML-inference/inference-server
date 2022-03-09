@@ -1,10 +1,11 @@
 import pickle
 
 import flwr as fl
+import gridfs
 import tensorflow as tf
 from pymongo import MongoClient
 
-from config import DB_PORT
+from application.config import DB_PORT
 
 
 async def start_client(id, config):
@@ -17,11 +18,13 @@ class LOKerasClient(fl.client.NumPyClient):
 
     def __init__(self, config):
         self.priv_config = config
-        client = MongoClient(port=DB_PORT)
+        client = MongoClient('db', DB_PORT)
         db = client.local
-        if db.models.find_one({"id" : config.model_id}):
-            result = db.models.find_one({"id" : config.model_id})
-            self.model = pickle.loads(result['model'])
+        db_grid = client.repository_grid
+        fs = gridfs.GridFS(db_grid)
+        if db.models.find_one({"id" : config.id, "version": config.version}):
+            result = db.models.find_one({"id": config.id, "version": config.version})
+            self.model = pickle.loads(fs.get(result['model_id']).read())
             self.model.__init__(config.shape, classes=config.num_classes, weights=None)
         else:
             self.model = tf.keras.applications.MobileNetV2(config.shape, classes=config.num_classes, weights=None)

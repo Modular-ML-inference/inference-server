@@ -44,24 +44,12 @@ class LOTrainingConfiguration(BaseModel):
         arbitrary_types_allowed = True
 
 
-class MLAlgorithmData(BaseModel):
-    data: str = Field(None, title="algorithm binary data encoded as base64 string")
-    meta: Dict[str, str] = Field(None, title="algorithm metadata as key-value pairs")
-
-    class Config:
-        arbitrary_types_allowed = True
-        json_encoders = {
-            ObjectId: str
-        }
+class MLModelData(BaseModel):
+    meta: Dict[str, str] = Field(None, title="model metadata as key-value pairs")
 
 
-class MLAlgorithm(MLAlgorithmData):
-    id: Optional[PyObjectId] = Field(alias='_id')
-    name: str = Field(None, title="algorithm name")
-    version: int = Field(None, title="algorithm version, numeric")
+class MLModel(MLModelData):
+    id: int = Field(None, title="model identified, numeric")
+    version: int = Field(None, title="model version, numeric")
+    model_id: Optional[str] = Field(None, title="id under which model is stored in gridfs")
 
-    class Config:
-        arbitrary_types_allowed = True
-        json_encoders = {
-            ObjectId: str
-        }
