@@ -11,7 +11,3 @@ services:
     image: mongo
     ports:
       - "27017:27017"
-# Paths to volumes should be absolute and will be different on non-Windows machines
-    volumes:
-      - c:/data/db:/data/db
-      - c:/data/configdb:/data/configdb
