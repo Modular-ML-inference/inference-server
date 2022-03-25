@@ -37,7 +37,8 @@ class LOTrainingConfiguration(BaseModel):
     eval_func: str
     num_classes: int
     shape: List[int]
-    model_id: str
+    model_id: int
+    model_version: int
     config: List[BasicConfiguration]
 
     class Config:

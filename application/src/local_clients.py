@@ -22,8 +22,8 @@ class LOKerasClient(fl.client.NumPyClient):
         db = client.local
         db_grid = client.repository_grid
         fs = gridfs.GridFS(db_grid)
-        if db.models.find_one({"id" : config.id, "version": config.version}):
-            result = db.models.find_one({"id": config.id, "version": config.version})
+        if db.models.find_one({"id" : config.model_id, "version": config.model_version}):
+            result = db.models.find_one({"id": config.model_id, "version": config.model_version})
             self.model = pickle.loads(fs.get(result['model_id']).read())
             self.model.__init__(config.shape, classes=config.num_classes, weights=None)
         else:
