@@ -1,7 +1,7 @@
 # FL Local Operations
 
 
-Run python main.py to run the server.
+Run `docker-compose -f docker-compose.yml up` to run the server.
 Use FastAPI functionalities to test the API on http://127.0.0.1:9050/docs.
 Sample request body for post /job/config/{id}:
 {"client_type_id": "local1",
