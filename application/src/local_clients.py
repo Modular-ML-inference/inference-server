@@ -4,13 +4,13 @@ import flwr as fl
 import gridfs
 import tensorflow as tf
 from pymongo import MongoClient
-
-from application.config import DB_PORT
+import os
+from application.config import DB_PORT, FEDERATED_PORT, SERVER_ADDRESS
 
 
 async def start_client(id, config):
     client = LOKerasClient(config)
-    fl.client.start_numpy_client(server_address=f"{config.server_address}:{8080+int(id)}", client=client)
+    fl.client.start_numpy_client(server_address=f"{config.server_address}:{FEDERATED_PORT}", client=client)
 
 
 # Define local client
@@ -22,12 +22,12 @@ class LOKerasClient(fl.client.NumPyClient):
         db = client.local
         db_grid = client.repository_grid
         fs = gridfs.GridFS(db_grid)
-        if db.models.find_one({"id" : config.model_id, "version": config.model_version}):
-            result = db.models.find_one({"id": config.model_id, "version": config.model_version})
-            self.model = pickle.loads(fs.get(result['model_id']).read())
-            self.model.__init__(config.shape, classes=config.num_classes, weights=None)
-        else:
-            self.model = tf.keras.applications.MobileNetV2(config.shape, classes=config.num_classes, weights=None)
+ #       if db.models.find_one({"id" : config.model_id, "version": config.model_version}):
+ #           result = db.models.find_one({"id": config.model_id, "version": config.model_version})
+ #           self.model = pickle.loads(fs.get(result['model_id']).read())
+ #           self.model.__init__(config.shape, classes=config.num_classes, weights=None)
+ #       else:
+        self.model = tf.keras.applications.MobileNetV2(config.shape, classes=config.num_classes, weights=None)
         self.model.compile(config.optimizer, config.eval_func, metrics=config.eval_metrics)
         (self.x_train, self.y_train), (self.x_test, self.y_test) = tf.keras.datasets.cifar10.load_data()
 

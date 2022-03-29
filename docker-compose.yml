@@ -1,13 +1,24 @@
-version: '3.8'
+version: '3'
 services:
-  app:
+  local_operations:
+    restart: always
     container_name: local_operations
     build: application
+    networks:
+      - default
     ports:
       - "9050:9050"
     depends_on:
       - db
   db:
+    restart: always
     image: mongo
+    networks:
+      - default
     ports:
-      - "27017:27017"
+      - "27019:27017"
+
+networks:
+  default:
+    driver: bridge
+    name: custom_fl

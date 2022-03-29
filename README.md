@@ -2,7 +2,7 @@
 
 
 Run python main.py to run the server.
-Use FastAPI functionalities to test the API on http://127.0.0.1:9000/docs.
+Use FastAPI functionalities to test the API on http://127.0.0.1:9050/docs.
 Sample request body for post /job/config/{id}:
 {"client_type_id": "local1",
  "server_address": "training_collector",

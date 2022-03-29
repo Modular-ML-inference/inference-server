@@ -4,7 +4,6 @@ from http import HTTPStatus
 from fastapi import BackgroundTasks
 from fastapi import FastAPI, status, UploadFile, File, Response, HTTPException
 from pymongo import MongoClient
-
 from config import PORT, HOST, DB_PORT
 from pydloc.models import LOTrainingConfiguration, MLModel
 from src.local_clients import start_client
