@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional
 
 from bson import ObjectId
 from pydantic import BaseModel, Field

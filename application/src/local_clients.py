@@ -4,8 +4,7 @@ import flwr as fl
 import gridfs
 import tensorflow as tf
 from pymongo import MongoClient
-import os
-from application.config import DB_PORT, FEDERATED_PORT, SERVER_ADDRESS
+from application.config import DB_PORT, FEDERATED_PORT
 
 
 async def start_client(id, config):
@@ -22,12 +21,12 @@ class LOKerasClient(fl.client.NumPyClient):
         db = client.local
         db_grid = client.repository_grid
         fs = gridfs.GridFS(db_grid)
- #       if db.models.find_one({"id" : config.model_id, "version": config.model_version}):
- #           result = db.models.find_one({"id": config.model_id, "version": config.model_version})
- #           self.model = pickle.loads(fs.get(result['model_id']).read())
- #           self.model.__init__(config.shape, classes=config.num_classes, weights=None)
- #       else:
-        self.model = tf.keras.applications.MobileNetV2(config.shape, classes=config.num_classes, weights=None)
+        if db.models.find_one({"id" : config.model_id, "version": config.model_version}):
+            result = db.models.find_one({"id": config.model_id, "version": config.model_version})
+            self.model = pickle.loads(fs.get(result['model_id']).read())
+            self.model.__init__(config.shape, classes=config.num_classes, weights=None)
+        else:
+            self.model = tf.keras.applications.MobileNetV2(config.shape, classes=config.num_classes, weights=None)
         self.model.compile(config.optimizer, config.eval_func, metrics=config.eval_metrics)
         (self.x_train, self.y_train), (self.x_test, self.y_test) = tf.keras.datasets.cifar10.load_data()
 
