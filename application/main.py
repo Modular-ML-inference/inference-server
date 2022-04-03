@@ -5,8 +5,10 @@ from fastapi import BackgroundTasks
 from fastapi import FastAPI, status, UploadFile, File, Response, HTTPException
 from pymongo import MongoClient
 from config import PORT, HOST, DB_PORT
+
+from application.utils import formulate_id
 from pydloc.models import LOTrainingConfiguration, MLModel
-from src.local_clients import start_client
+import src.local_clients
 
 app = FastAPI()
 
@@ -15,7 +17,12 @@ app = FastAPI()
 @app.post("/job/config/{id}")
 def receive_updated(id, data: LOTrainingConfiguration, background_tasks: BackgroundTasks):
     try:
-        background_tasks.add_task(start_client, id=id, config=data)
+        placed_id = formulate_id(config=data)
+        if placed_id not in src.local_clients.current_jobs:
+            src.local_clients.current_jobs[placed_id] = 1
+        else:
+            src.local_clients.current_jobs[placed_id] += 1
+        background_tasks.add_task(src.local_clients.start_client, id=id, config=data)
     except Exception as e:
         print("An exception occurred ::", e)
         return 500
@@ -52,10 +59,10 @@ async def update_model(id: int, version: int, file: UploadFile = File(...)):
         raise HTTPException(status_code=404, detail="model not found")
 
 
-# Receive any required data transformer for job with identified id
-@app.post("/job/status/{id}")
-def retrieve_status(id):
-    return "Receive transformer"
+# Returns statuses of currently running jobs by returning information about the number of model ids and versions being ran
+@app.post("/job/status")
+def retrieve_status():
+    return src.local_clients.current_jobs
 
 
 if __name__ == "__main__":

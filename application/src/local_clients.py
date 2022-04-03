@@ -4,12 +4,23 @@ import flwr as fl
 import gridfs
 import tensorflow as tf
 from pymongo import MongoClient
+from starlette.concurrency import run_in_threadpool
+
 from application.config import DB_PORT, FEDERATED_PORT
+from application.utils import formulate_id
+
+current_jobs = {}
 
 
 async def start_client(id, config):
     client = LOKerasClient(config)
-    fl.client.start_numpy_client(server_address=f"{config.server_address}:{FEDERATED_PORT}", client=client)
+    await run_in_threadpool(
+        lambda: fl.client.start_numpy_client(server_address=f"{config.server_address}:{FEDERATED_PORT}", client=client))
+    current_id = formulate_id(config)
+    if current_id in current_jobs and current_jobs[current_id] > 1:
+        current_jobs[current_id] -= 1
+    else:
+        current_jobs.pop(current_id)
 
 
 # Define local client

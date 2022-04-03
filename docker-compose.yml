@@ -11,12 +11,11 @@ services:
     depends_on:
       - db
   db:
+    container_name: db
     restart: always
-    image: mongo
+    image: mongo:latest
     networks:
       - default
-    ports:
-      - "27019:27017"
 
 networks:
   default:
