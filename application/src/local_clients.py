@@ -6,7 +6,7 @@ import tensorflow as tf
 from pymongo import MongoClient
 from starlette.concurrency import run_in_threadpool
 
-from application.config import DB_PORT, FEDERATED_PORT
+from application.config import DB_PORT, FEDERATED_PORT, DATABASE_NAME
 from application.utils import formulate_id
 
 current_jobs = {}
@@ -28,7 +28,7 @@ class LOKerasClient(fl.client.NumPyClient):
 
     def __init__(self, config):
         self.priv_config = config
-        client = MongoClient('db', DB_PORT)
+        client = MongoClient(DATABASE_NAME, DB_PORT)
         db = client.local
         db_grid = client.repository_grid
         fs = gridfs.GridFS(db_grid)

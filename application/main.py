@@ -1,14 +1,16 @@
+from http import HTTPStatus
+
 import gridfs
 import uvicorn
-from http import HTTPStatus
+from config import PORT, HOST, DB_PORT
 from fastapi import BackgroundTasks
 from fastapi import FastAPI, status, UploadFile, File, Response, HTTPException
 from pymongo import MongoClient
-from config import PORT, HOST, DB_PORT
 
+import src.local_clients
+from application.config import DATABASE_NAME
 from application.utils import formulate_id
 from pydloc.models import LOTrainingConfiguration, MLModel
-import src.local_clients
 
 app = FastAPI()
 
@@ -33,7 +35,7 @@ def receive_updated(id, data: LOTrainingConfiguration, background_tasks: Backgro
 @app.post("/model/")
 def receive_conf(model: MLModel):
     try:
-        client = MongoClient('db', DB_PORT)
+        client = MongoClient(DATABASE_NAME, DB_PORT)
         db = client.local
         db.models.insert_one(model.dict(by_alias=True))
     except Exception as e:
@@ -45,7 +47,7 @@ def receive_conf(model: MLModel):
 # Receive new model file
 @app.put("/model/{id}/{version}", status_code=status.HTTP_204_NO_CONTENT)
 async def update_model(id: int, version: int, file: UploadFile = File(...)):
-    client = MongoClient('db', DB_PORT)
+    client = MongoClient(DATABASE_NAME, DB_PORT)
     db = client.repository
     db_grid = client.repository_grid
     fs = gridfs.GridFS(db_grid)
@@ -59,7 +61,8 @@ async def update_model(id: int, version: int, file: UploadFile = File(...)):
         raise HTTPException(status_code=404, detail="model not found")
 
 
-# Returns statuses of currently running jobs by returning information about the number of model ids and versions being ran
+# Returns statuses of currently running jobs by returning information
+# about the number of model ids and versions being ran
 @app.post("/job/status")
 def retrieve_status():
     return src.local_clients.current_jobs
