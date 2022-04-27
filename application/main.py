@@ -9,22 +9,20 @@ from pymongo import MongoClient
 
 import src.local_clients
 from application.config import DATABASE_NAME
-from application.utils import formulate_id
 from pydloc.models import LOTrainingConfiguration, MLModel
 
 app = FastAPI()
 
 
 # Receive configuration for training job
-@app.post("/job/config/{id}")
-def receive_updated(id, data: LOTrainingConfiguration, background_tasks: BackgroundTasks):
+@app.post("/job/config/{training_id}")
+async def receive_updated(training_id, data: LOTrainingConfiguration, background_tasks: BackgroundTasks):
     try:
-        placed_id = formulate_id(config=data)
-        if placed_id not in src.local_clients.current_jobs:
-            src.local_clients.current_jobs[placed_id] = 1
+        if training_id not in src.local_clients.current_jobs:
+            src.local_clients.current_jobs[training_id] = 1
         else:
-            src.local_clients.current_jobs[placed_id] += 1
-        background_tasks.add_task(src.local_clients.start_client, id=id, config=data)
+            src.local_clients.current_jobs[training_id] += 1
+        background_tasks.add_task(src.local_clients.start_client, training_id=training_id, config=data)
     except Exception as e:
         print("An exception occurred ::", e)
         return 500
@@ -36,7 +34,7 @@ def receive_updated(id, data: LOTrainingConfiguration, background_tasks: Backgro
 def receive_conf(model: MLModel):
     try:
         client = MongoClient(DATABASE_NAME, DB_PORT)
-        db = client.local
+        db = client.repository
         db.models.insert_one(model.dict(by_alias=True))
     except Exception as e:
         print("An exception occurred ::", e)
@@ -45,16 +43,16 @@ def receive_conf(model: MLModel):
 
 
 # Receive new model file
-@app.put("/model/{id}/{version}", status_code=status.HTTP_204_NO_CONTENT)
-async def update_model(id: int, version: int, file: UploadFile = File(...)):
+@app.put("/model/{model_name}/{model_version}", status_code=status.HTTP_204_NO_CONTENT)
+async def update_model(model_name: str, model_version: str, file: UploadFile = File(...)):
     client = MongoClient(DATABASE_NAME, DB_PORT)
     db = client.repository
     db_grid = client.repository_grid
     fs = gridfs.GridFS(db_grid)
-    if len(list(db.models.find({'id': id, 'version': version}).limit(1))) > 0:
+    if len(list(db.models.find({'model_name': model_name, 'model_version': model_version}).limit(1))) > 0:
         data = await file.read()
-        model_id = fs.put(data, filename=f'model/{id}/{version}')
-        db.models.update_one({'id': id, 'version': version}, {"$set": {"model_id": str(model_id)}},
+        model_id = fs.put(data, filename=f'model/{model_name}/{model_version}')
+        db.models.update_one({'model_name': model_name, 'model_version': model_version}, {"$set": {"model_id": str(model_id)}},
                              upsert=False)
         return Response(status_code=HTTPStatus.NO_CONTENT.value)
     else:
@@ -69,4 +67,4 @@ def retrieve_status():
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host=HOST, port=PORT)
+    uvicorn.run("main:app", host=HOST, port=PORT, workers=3)
