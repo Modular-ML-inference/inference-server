@@ -36,11 +36,9 @@ class LOTrainingConfiguration(BaseModel):
     eval_metrics: List[str]
     eval_func: str
     num_classes: int
-    num_rounds: int
     shape: List[int]
-    training_id: str
-    model_name: str
-    model_version: str
+    model_id: int
+    model_version: int
     config: List[BasicConfiguration]
 
     class Config:
@@ -52,7 +50,7 @@ class MLModelData(BaseModel):
 
 
 class MLModel(MLModelData):
-    model_name: str = Field(None, title="model identified, str")
-    model_version: str = Field(None, title="model version, str")
+    id: int = Field(None, title="model identified, numeric")
+    version: int = Field(None, title="model version, numeric")
     model_id: Optional[str] = Field(None, title="id under which model is stored in gridfs")
 
