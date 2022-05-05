@@ -38,10 +38,11 @@ class LOTrainingConfiguration(BaseModel):
     num_classes: int
     num_rounds: int
     shape: List[int]
-    training_id: str
+    training_id: int
     model_name: str
     model_version: str
     config: List[BasicConfiguration]
+    eval_metrics_value: float
 
     class Config:
         arbitrary_types_allowed = True
