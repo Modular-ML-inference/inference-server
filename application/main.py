@@ -67,4 +67,4 @@ def retrieve_status():
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host=HOST, port=PORT, workers=3)
+    uvicorn.run("main:app", host=HOST, port=PORT)

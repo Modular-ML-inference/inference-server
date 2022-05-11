@@ -1,7 +1,7 @@
 # FL Local Operations
 
 
-Run `docker-compose -p appv0 --env-file .env up --force-recreate --build -d` to run the server and change `USER_INDEX` in `application/.env` file, as well as the `p` argument in the command, to run multiple clients at the same time.
+Run `docker-compose -p appv0 --env-file application/.env up --force-recreate --build -d` to run the server and change `USER_INDEX` in `application/.env` file, as well as the `p` argument in the command, to run multiple clients at the same time.
 Use FastAPI functionalities to test the API on http://127.0.0.1:9050/docs.
 Sample request body for post /job/config/{training_id}:
 {"client_type_id": "local1",
