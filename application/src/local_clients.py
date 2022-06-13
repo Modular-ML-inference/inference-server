@@ -8,6 +8,7 @@ from pymongo import MongoClient
 from starlette.concurrency import run_in_threadpool
 
 from application.config import DB_PORT, FEDERATED_PORT, DATABASE_NAME
+from application.src.data_loader import BinaryDataLoader
 
 current_jobs = {}
 
@@ -43,7 +44,9 @@ class LOKerasClient(fl.client.NumPyClient):
         else:
             self.model = tf.keras.applications.MobileNetV2(config.shape, classes=config.num_classes, weights=None)
         self.model.compile(config.optimizer, config.eval_func, metrics=config.eval_metrics)
-        (self.x_train, self.y_train), (self.x_test, self.y_test) = tf.keras.datasets.cifar10.load_data()
+        self.data_loader = BinaryDataLoader()
+        (self.x_train, self.y_train) = self.data_loader.load_train()
+        (self.x_test, self.y_test) = self.data_loader.load_test()
 
     def get_parameters(self):
         return self.model.get_weights()

@@ -1,16 +1,22 @@
-version: '3'
+version: '2'
 services:
   local_operations:
-    env_file:
-      - application/.env
     restart: always
-    build: application
+    build:
+      context: application
+      dockerfile: Dockerfile
+    environment:
+      - USER_INDEX=${USER_INDEX}
     networks:
       - default
     ports:
       - "905${USER_INDEX}:9050"
     depends_on:
       - db
+    volumes:
+      - type: bind
+        source: ./data
+        target: /data
   db:
     container_name: "db-${USER_INDEX}"
     restart: always
