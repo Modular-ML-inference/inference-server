@@ -7,8 +7,8 @@ Sample request body for post /job/config/{training_id}:
 {"client_type_id": "local1",
  "server_address": "training_collector",
  "optimizer": "adam",
- "eval_metrics": ["MSE"],
- "eval_func": "Huber",
+ "eval_metrics": ["MSE", "accuracy"],
+ "eval_func": "categorical_crossentropy",
  "num_classes": "10",
  "num_rounds": "50",
  "training_id":"10",
@@ -21,3 +21,9 @@ Sample request body for post /job/config/{training_id}:
    "steps_per_epoch": "32",
    "epochs": "5",
    "learning_rate": "0.001"}]}
+
+Additional changes:
+- The data used for training is now taken from the `data` folder by loading the right `x_train.npy`, 
+`x_test.npy`, `y_test.npy` and `y_train.npy` files
+- The model is now loaded from the local enabler repository and, if it's not there, from the general repository
+- The script for starting multiple Local Operations can now be ran as `./start-local.sh 3`, where 3 is a sample number of enablers to start

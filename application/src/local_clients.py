@@ -1,13 +1,15 @@
-import pickle
+import os
+import shutil
+from zipfile import ZipFile
 
 import flwr as fl
 import gridfs
-import tensorflow as tf
-from flwr.common import parameters_to_weights
+import keras
+import requests
 from pymongo import MongoClient
 from starlette.concurrency import run_in_threadpool
 
-from application.config import DB_PORT, FEDERATED_PORT, DATABASE_NAME
+from application.config import DB_PORT, FEDERATED_PORT, DATABASE_NAME, REPOSITORY_ADDRESS
 from application.src.data_loader import BinaryDataLoader
 
 current_jobs = {}
@@ -35,14 +37,28 @@ class LOKerasClient(fl.client.NumPyClient):
         db_grid = client.repository_grid
         fs = gridfs.GridFS(db_grid)
         if db.models.find_one({"model_name": config.model_name, "model_version": config.model_version}):
-            result = db.models.find_one({"model_id": config.model_id, "model_version": config.model_version})
+            result = db.models.find_one({"model_name": config.model_name, "model_version":
+                config.model_version})
             # add model json configuration to then properly use the model
-            self.model = tf.keras.applications.MobileNetV2(config.shape, classes=config.num_classes, weights=None)
-            parameters = pickle.loads(fs.get(result['model_id']).read())
-            weights = parameters_to_weights(parameters)
-            self.model.set_weights(weights)
+            file = fs.get(result['model_id']).read()
+            with open('temp.zip', 'wb') as f:
+                shutil.copyfileobj(file, f)
+            with ZipFile('temp.zip', 'r') as zipObj:
+                # Extract all the contents of zip file in current directory
+                zipObj.extractall("temp")
+            self.model = keras.models.load_model('temp')
         else:
-            self.model = tf.keras.applications.MobileNetV2(config.shape, classes=config.num_classes, weights=None)
+            with requests.get(f"{REPOSITORY_ADDRESS}/model"
+                              f"/{config.model_name}/{config.model_version}",
+                              stream=True) as r:
+                with open('temp.zip', 'wb') as f:
+                    shutil.copyfileobj(r.raw, f)
+            with ZipFile('temp.zip', 'r') as zipObj:
+                # Extract all the contents of zip file in current directory
+                zipObj.extractall("temp")
+            self.model = keras.models.load_model('temp')
+            shutil.rmtree("temp")
+            os.remove("temp.zip")
         self.model.compile(config.optimizer, config.eval_func, metrics=config.eval_metrics)
         self.data_loader = BinaryDataLoader()
         (self.x_train, self.y_train) = self.data_loader.load_train()
@@ -62,9 +78,10 @@ class LOKerasClient(fl.client.NumPyClient):
 
     def evaluate(self, parameters, config):
         self.model.set_weights(parameters)
-        loss, metrics = self.model.evaluate(self.x_test, self.y_test)
-        if not isinstance(metrics, list):
-            metrics = [metrics]
-        evaluations = {m: metrics[i] for i, m in enumerate(self.priv_config.eval_metrics)}
+        metrics = ["loss"]+[m for m in self.priv_config.eval_metrics]
+        a = self.model.evaluate(self.x_test, self.y_test)
+        evaluations = {m: a[i] for i, m in enumerate(metrics)}
+        loss = evaluations["loss"]
+        del evaluations["loss"]
         self.round += 1
         return loss, len(self.x_test), evaluations
