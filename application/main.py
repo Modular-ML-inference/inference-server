@@ -9,7 +9,7 @@ from pymongo import MongoClient
 
 import src.local_clients
 from application.config import DATABASE_NAME
-from pydloc.models import LOTrainingConfiguration, MLModel
+from datamodels.models import LOTrainingConfiguration, MLModel
 
 app = FastAPI()
 

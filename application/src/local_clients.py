@@ -64,7 +64,7 @@ class LOKerasClient(fl.client.NumPyClient):
         (self.x_train, self.y_train) = self.data_loader.load_train()
         (self.x_test, self.y_test) = self.data_loader.load_test()
 
-    def get_parameters(self):
+    def get_parameters(self, config):
         return self.model.get_weights()
 
     def fit(self, parameters, config):
