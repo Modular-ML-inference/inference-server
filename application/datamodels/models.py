@@ -29,10 +29,30 @@ class BasicConfiguration(BaseModel):
     learning_rate: float
 
 
+class OptimizerConfiguration(BaseModel):
+    optimizer: str
+    lr: Optional[float]
+    momentum: Optional[float]
+    weight_decay: Optional[float]
+
+
+class SchedulerConfiguration(BaseModel):
+    scheduler: str
+    step_size: Optional[int]
+    gamma: Optional[float]
+
+
+class WarmupConfiguration(BaseModel):
+    scheduler: str
+    warmup_iters: int
+    warmup_epochs: int
+    warmup_factor: float
+    scheduler_conf: SchedulerConfiguration
+
+
 class LOTrainingConfiguration(BaseModel):
     client_type_id: str
     server_address: str
-    optimizer: str
     eval_metrics: List[str]
     eval_func: str
     num_classes: int
@@ -42,6 +62,9 @@ class LOTrainingConfiguration(BaseModel):
     model_name: str
     model_version: str
     config: List[BasicConfiguration]
+    optimizer_config: Optional[OptimizerConfiguration]
+    scheduler_config: Optional[SchedulerConfiguration]
+    warmup_config: Optional[WarmupConfiguration]
     eval_metrics_value: float
 
     class Config:
@@ -55,5 +78,5 @@ class MLModelData(BaseModel):
 class MLModel(MLModelData):
     model_name: str = Field(None, title="model identified, str")
     model_version: str = Field(None, title="model version, str")
-    model_id: Optional[str] = Field(None, title="id under which model is stored in gridfs")
-
+    model_id: Optional[str] = Field(None,
+                                    title="id under which model is stored in gridfs")

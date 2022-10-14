@@ -23,11 +23,11 @@ class BinaryDataLoader(ABC):
         self.path = path
 
     def load_train(self):
-        x_train = load(os.path.join(self.path, "x_train.npy"))
-        y_train = load(os.path.join(self.path, "y_train.npy"))
+        x_train = load(os.path.join(self.path, "x_train.npy"), allow_pickle=True)
+        y_train = load(os.path.join(self.path, "y_train.npy"), allow_pickle=True)
         return x_train, y_train
 
     def load_test(self):
-        x_test = load(os.path.join(self.path, "x_test.npy"))
-        y_test = load(os.path.join(self.path, "y_test.npy"))
+        x_test = load(os.path.join(self.path, "x_test.npy"), allow_pickle=True)
+        y_test = load(os.path.join(self.path, "y_test.npy"), allow_pickle=True)
         return x_test, y_test
