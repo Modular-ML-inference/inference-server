@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 
 from numpy import load
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 
 class DataLoader(ABC):
     path: str

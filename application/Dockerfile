@@ -1,4 +1,4 @@
-FROM karola766/federated-learning:base_image_torch
+FROM karola766/federated-learning:base_image_fl
 WORKDIR /code
 RUN apt-get update
 RUN apt-get install ffmpeg libsm6 libxext6  -y

@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 import gridfs
 import uvicorn
-from config import PORT, HOST, DB_PORT
+from config import PORT, HOST, DB_PORT, TOTAL_LOCAL_OPERATIONS
 from fastapi import BackgroundTasks
 from fastapi import FastAPI, status, UploadFile, File, Response, HTTPException
 from pymongo import MongoClient
@@ -64,6 +64,10 @@ async def update_model(model_name: str, model_version: str, file: UploadFile = F
 @app.post("/job/status")
 def retrieve_status():
     return src.local_clients.current_jobs
+
+@app.get("/job/total")
+def retrieve_total_local_operations():
+    return Response(content=TOTAL_LOCAL_OPERATIONS)
 
 
 if __name__ == "__main__":
