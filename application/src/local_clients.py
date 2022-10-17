@@ -2,7 +2,7 @@ import logging
 
 import flwr as fl
 from starlette.concurrency import run_in_threadpool
-
+from application.config import ORCHESTRATOR_ADDRESS, default_twotronics_config
 from application.additional.utils import ModelLoader
 from application.config import FEDERATED_PORT
 from application.src.builders.keras_builder import KerasBuilder
@@ -15,7 +15,7 @@ async def start_client(training_id, config):
     loader = ModelLoader()
     library = loader.check_library(config.model_name, config.model_version)
     if library == "pytorch":
-        builder = PytorchBuilder(training_id, config)
+        builder = PytorchBuilder(training_id, default_twotronics_config)
     else:
         builder = KerasBuilder(training_id, config)
     client = builder.product()

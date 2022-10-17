@@ -11,6 +11,8 @@ services:
       - default
     ports:
       - "905${USER_INDEX}:9050"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - db
     volumes:
@@ -21,6 +23,8 @@ services:
     container_name: "db-${USER_INDEX}"
     restart: always
     image: mongo:latest
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - default
 
