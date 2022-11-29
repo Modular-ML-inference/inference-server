@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Union, Optional
 
 from bson import ObjectId
 from pydantic import BaseModel, Field
@@ -41,6 +41,15 @@ class SchedulerConfiguration(BaseModel):
     step_size: Optional[int]
     gamma: Optional[float]
 
+class DPConfiguration(BaseModel):
+    num_sampled_clients: int
+    init_clip_norm: float = 0.1
+    noise_multiplier: float = 1
+    server_side_noising: bool = True
+    clip_count_stddev: float = None
+    clip_norm_target_quantile: float = 0.5
+    clip_norm_lr: float = 0.2
+
 
 class WarmupConfiguration(BaseModel):
     scheduler: str
@@ -49,6 +58,11 @@ class WarmupConfiguration(BaseModel):
     warmup_factor: float
     scheduler_conf: SchedulerConfiguration
 
+class HMConfiguration(BaseModel):
+    poly_modulus_degree: int = 8192
+    coeff_mod_bit_sizes: List[int] = [60, 40, 40]
+    scale_bits: int = 40
+    scheme: str = "CKKS"
 
 class LOTrainingConfigurationExtended(BaseModel):
     client_type_id: str
@@ -84,6 +98,7 @@ class LOTrainingConfiguration(BaseModel):
     model_version: str
     config: List[BasicConfiguration]
     eval_metrics_value: float
+    privacy_mechanisms: Dict[str, Union[HMConfiguration, DPConfiguration]] = Field(..., alias='privacy-mechanisms')
 
     class Config:
         arbitrary_types_allowed = True

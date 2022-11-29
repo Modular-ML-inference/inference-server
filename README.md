@@ -17,6 +17,7 @@ Sample request body for post /job/config/{training_id}:
  "model_version":"base2",
  "shape": ["32", "32", "3"],
  "eval_metrics_value": "3.14",
+"privacy-mechanisms":{"homomorphic":{}, "dp-adaptive":{"num_sampled_clients":"1"}},
  "config": [{"config_id": "min_effort",
    "batch_size": "64",
    "steps_per_epoch": "32",
@@ -45,6 +46,7 @@ Sample request body for post /job/config/{training_id}:
    "epochs": "5",
    "learning_rate": "0.001"}
   ],
+"privacy_mechanisms":{"homomorphic":{}, "dp-adaptive":{"num_sampled_clients":"1"}},
   "optimizer_config": {
     "optimizer": "adam"
   },
@@ -82,6 +84,7 @@ Configuration for Twotronics demo:
    "epochs": "5",
    "learning_rate": "0.001"}
   ],
+"privacy_mechanisms":{"homomorphic":{}, "dp-adaptive":{"num_sampled_clients":"1"}},
   "optimizer_config": {
     "optimizer": "sgd",
     "lr": "0.005",
