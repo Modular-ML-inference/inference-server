@@ -5,6 +5,7 @@
 Run `docker compose -p appv0 up --force-recreate --build -d` to run the server and set `USER_INDEX` to a given value beforehand, as well as the `p` argument in the command to `appv{index}`, to run multiple clients at the same time.
 Use FastAPI functionalities to test the API on http://127.0.0.1:9050/docs.
 Sample request body for post /job/config/{training_id}:
+```json
 {"client_type_id": "local1",
  "server_address": "training_collector",
  "optimizer": "adam",
@@ -23,7 +24,9 @@ Sample request body for post /job/config/{training_id}:
    "steps_per_epoch": "32",
    "epochs": "5",
    "learning_rate": "0.001"}]}
+```
 
+```json
 {
   "client_type_id": "local1",
   "server_address": "training_collector",
@@ -52,7 +55,7 @@ Sample request body for post /job/config/{training_id}:
   },
   "eval_metrics_value": "3.14"
 }
-
+```
 Additional changes:
 - The data used for training is now taken from the `data` folder by loading the right `x_train.npy`, 
 `x_test.npy`, `y_test.npy` and `y_train.npy` files
@@ -61,7 +64,7 @@ Additional changes:
 
 
 Configuration for Twotronics demo:
-
+```json
 {
   "client_type_id": "local1",
   "server_address": "training_collector",
@@ -107,3 +110,9 @@ Configuration for Twotronics demo:
   },
   "eval_metrics_value": "0"
 }
+```
+
+This enabler can use homomorphic encryption for communication. In order to generate a new set of keys, run the file 
+```python
+application/generate_homomorphic_keys.py
+```.

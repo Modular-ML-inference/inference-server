@@ -37,6 +37,7 @@ msgpack==1.0.3
 numpy==1.21.0
 oauthlib==3.1.1
 opencv-python==4.5.5.62
+openml==0.13.0
 opt-einsum==3.3.0
 protobuf==3.19.0
 pyasn1==0.4.8
@@ -55,12 +56,14 @@ safer==4.4.0
 shutils==0.1.0
 six==1.15.0
 sniffio==1.2.0
+tenseal==0.3.12
 tensorboard==2.7.0
 tensorboard-data-server==0.6.1
 tensorboard-plugin-wit==1.8.0
 tensorflow==2.7.0
 tensorflow-estimator==2.7.0
 tensorflow-io-gcs-filesystem==0.27.0
+seaborn==0.12.1
 soupsieve==2.2.1
 starlette==0.16.0
 termcolor==1.1.0

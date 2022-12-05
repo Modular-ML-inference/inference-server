@@ -1,19 +1,23 @@
 from typing import Dict, Union
 
-from flwr.client import NumPyClient
+from flwr.client import NumPyClient, start_numpy_client, start_client
 from flwr.client.dpfedavg_numpy_client import DPFedAvgNumPyClient
 
 from application.datamodels.models import DPConfiguration, HMConfiguration
+from application.src.custom_clients.hm_encryption_client import HMEncryptionClient
 
 
 class ClientPrivacyManager:
 
+    run_method = start_numpy_client
+
     def wrap(self, client: NumPyClient, priv_configuration: Dict[str, Union[HMConfiguration, DPConfiguration]]):
         if "dp-adaptive" in priv_configuration:
-            strategy = self.dp_wrap(client)
+            client = self.dp_wrap(client)
         elif "homomorphic" in priv_configuration:
-            strategy = self.homomorphic_wrap(client)
-        return strategy
+            client = self.homomorphic_wrap(client)
+            self.run_method = start_client
+        return client
 
     @staticmethod
     def dp_wrap(client: NumPyClient):
@@ -21,4 +25,5 @@ class ClientPrivacyManager:
 
     @staticmethod
     def homomorphic_wrap(client: NumPyClient):
+        client = HMEncryptionClient(client)
         return client
