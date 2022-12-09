@@ -1,17 +1,13 @@
 import logging
-from logging import INFO
-from typing import Dict, Tuple
 import os
+from logging import INFO
 
+import numpy as np
+import tenseal as ts
 from flwr import common
 from flwr.client import Client, NumPyClient
-import tenseal as ts
-import numpy as np
 from flwr.common import Code
-from flwr.common.logger import log
-
-from flwr.common.typing import Config, NDArrays, Scalar, Status, GetPropertiesIns, GetPropertiesRes
-from flwr.proto.transport_pb2 import Parameters
+from flwr.common.typing import Status, GetPropertiesIns, GetPropertiesRes
 
 from application.additional.utils import HMSerializer, ts_tensors_to_parameters, parameters_to_ts_tensors
 from application.config import HM_SECRET_FILE

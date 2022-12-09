@@ -1,16 +1,13 @@
 import warnings
-from logging import INFO
+from typing import Tuple, Union, List
 
+import flwr as fl
+import numpy as np
 import pandas as pd
 import seaborn as sns
-import flwr as fl
-from flwr.common.logger import log
-from sklearn.model_selection import train_test_split
-from typing import Tuple, Union, List
-import numpy as np
 from sklearn.linear_model import LogisticRegression
-import openml
 from sklearn.metrics import log_loss
+from sklearn.model_selection import train_test_split
 
 from application.src.clientbuilder import FlowerClientBuilder
 
@@ -35,7 +32,7 @@ def get_model_parameters(model: LogisticRegression) -> LogRegParams:
 
 
 def set_model_params(
-    model: LogisticRegression, params: LogRegParams
+        model: LogisticRegression, params: LogRegParams
 ) -> LogisticRegression:
     """Sets the parameters of a sklean LogisticRegression model."""
     model.coef_ = params[0]
@@ -125,6 +122,7 @@ class HMTestClient(fl.client.NumPyClient):
         accuracy = self.model.score(self.X_test, self.y_test)
         return loss, len(self.X_test), {"accuracy": accuracy}
 
+
 class HMTestBuilder(FlowerClientBuilder):
 
     def __init__(self, training_id, configuration):
@@ -139,5 +137,3 @@ class HMTestBuilder(FlowerClientBuilder):
 
     def add_optimizer(self) -> None:
         pass
-
-

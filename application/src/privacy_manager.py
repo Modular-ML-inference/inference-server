@@ -14,7 +14,7 @@ class ClientPrivacyManager:
     def wrap(self, client: NumPyClient, priv_configuration: Dict[str, Union[HMConfiguration, DPConfiguration]]):
         if "dp-adaptive" in priv_configuration:
             client = self.dp_wrap(client)
-        elif "homomorphic" in priv_configuration:
+        if "homomorphic" in priv_configuration:
             client = self.homomorphic_wrap(client)
             self.run_method = start_client
         return client
@@ -25,5 +25,4 @@ class ClientPrivacyManager:
 
     @staticmethod
     def homomorphic_wrap(client: NumPyClient):
-        client = HMEncryptionClient(client)
-        return client
+        return HMEncryptionClient(client)
