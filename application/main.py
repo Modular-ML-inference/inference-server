@@ -2,6 +2,8 @@ from http import HTTPStatus
 
 import gridfs
 import uvicorn
+
+from application.additional.utils import check_gpu, check_packages, check_models, check_memory, check_storage
 from config import PORT, HOST, DB_PORT, TOTAL_LOCAL_OPERATIONS
 from fastapi import BackgroundTasks
 from fastapi import FastAPI, status, UploadFile, File, Response, HTTPException
@@ -9,7 +11,7 @@ from pymongo import MongoClient
 
 import src.local_clients
 from application.config import DATABASE_NAME
-from datamodels.models import LOTrainingConfiguration, MLModel
+from datamodels.models import LOTrainingConfiguration, MLModel, MachineCapabilities
 
 app = FastAPI()
 
@@ -52,7 +54,8 @@ async def update_model(model_name: str, model_version: str, file: UploadFile = F
     if len(list(db.models.find({'model_name': model_name, 'model_version': model_version}).limit(1))) > 0:
         data = await file.read()
         model_id = fs.put(data, filename=f'model/{model_name}/{model_version}')
-        db.models.update_one({'model_name': model_name, 'model_version': model_version}, {"$set": {"model_id": str(model_id)}},
+        db.models.update_one({'model_name': model_name, 'model_version': model_version},
+                             {"$set": {"model_id": str(model_id)}},
                              upsert=False)
         return Response(status_code=HTTPStatus.NO_CONTENT.value)
     else:
@@ -65,9 +68,29 @@ async def update_model(model_name: str, model_version: str, file: UploadFile = F
 def retrieve_status():
     return src.local_clients.current_jobs
 
+
 @app.get("/job/total")
 def retrieve_total_local_operations():
     return Response(content=TOTAL_LOCAL_OPERATIONS)
+
+
+@app.post("/capabilities")
+def retrieve_capabilities():
+    """
+    An endpoint that returns the current capabilities of a given Local Operations instance
+    """
+    is_gpu = check_gpu()
+    memory_left = check_memory()
+    storage_left = check_storage()
+    package_versions = check_packages()
+    model_versions = check_models()
+    m = MachineCapabilities(storage=storage_left, RAM=memory_left, GPU=is_gpu, preinstalled_libraries=package_versions, available_models=model_versions)
+    return m
+
+
+@app.post("/format")
+def retrieve_current_format():
+    return src.local_clients.current_jobs
 
 
 if __name__ == "__main__":

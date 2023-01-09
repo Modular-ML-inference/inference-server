@@ -40,6 +40,7 @@ opencv-python==4.5.5.62
 openml==0.13.0
 opt-einsum==3.3.0
 protobuf==3.19.0
+psutil==5.9.4
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.21
