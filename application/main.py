@@ -1,9 +1,11 @@
 from http import HTTPStatus
+from threading import Thread
 
 import gridfs
 import uvicorn
 
-from application.additional.utils import check_gpu, check_packages, check_models, check_memory, check_storage
+from application.additional.machine_monitoring import check_storage, check_memory, check_gpu, check_packages, \
+    check_models, setup_check_data_changes
 from config import PORT, HOST, DB_PORT, TOTAL_LOCAL_OPERATIONS
 from fastapi import BackgroundTasks
 from fastapi import FastAPI, status, UploadFile, File, Response, HTTPException
@@ -94,4 +96,6 @@ def retrieve_current_format():
 
 
 if __name__ == "__main__":
+    daemon = Thread(target=setup_check_data_changes, daemon=True, name='Data Modification Monitor')
+    daemon.start()
     uvicorn.run("main:app", host=HOST, port=PORT)
