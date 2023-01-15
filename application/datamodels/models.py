@@ -1,4 +1,4 @@
-from typing import List, Dict, Union, Optional
+from typing import List, Dict, Union, Optional, Any
 
 from bson import ObjectId
 from pydantic import BaseModel, Field
@@ -126,4 +126,24 @@ class MachineCapabilities(BaseModel):
     preinstalled_libraries: Dict[str, str] = Field(None,
                                                    title="a list of necessary/available preinstalled libraries with compliant versions")
     available_models: Dict[str, str] = Field(None,
-                                                   title="a list of necessary/available models named by their name and version")
+                                             title="a list of necessary/available models named by their name and version")
+
+
+class FLDataTransformation(BaseModel):
+    id: str
+    description: Optional[str] = Field(None,
+                                       title="the available data explaining the purpose of a given transformation")
+    parameter_types: Dict[str, str] = Field(None, title="the list of input parameters and their types")
+    default_values: Dict[str, Any] = Field(None,
+                                           title="for the parameters having default values, input them along with the description of values")
+    outputs: List[str] = Field(None, title="List of outputs and their expected types")
+    needs: MachineCapabilities
+
+
+class FLDataTransformationConfig(BaseModel):
+    id: str
+    params: Dict[str, Any]
+
+
+class FLDataTransformationPipelineConfig(BaseModel):
+    configuration: Dict[str, List[FLDataTransformationConfig]]
