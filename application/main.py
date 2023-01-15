@@ -1,3 +1,5 @@
+import json
+import os
 from http import HTTPStatus
 from threading import Thread
 
@@ -6,7 +8,7 @@ import uvicorn
 
 from application.additional.machine_monitoring import check_storage, check_memory, check_gpu, check_packages, \
     check_models, setup_check_data_changes
-from config import PORT, HOST, DB_PORT, TOTAL_LOCAL_OPERATIONS
+from config import PORT, HOST, DB_PORT, TOTAL_LOCAL_OPERATIONS, PREPROCESSED_FOLDER, DATA_FORMAT_FILE, DATA_FOLDER
 from fastapi import BackgroundTasks
 from fastapi import FastAPI, status, UploadFile, File, Response, HTTPException
 from pymongo import MongoClient
@@ -92,7 +94,15 @@ def retrieve_capabilities():
 
 @app.post("/format")
 def retrieve_current_format():
-    return src.local_clients.current_jobs
+    """
+    An endpoint that returns the current format of the data
+    """
+    format_file = os.path.join(PREPROCESSED_FOLDER, DATA_FORMAT_FILE)
+    if not os.path.exists(format_file):
+        format_file = os.path.join(DATA_FOLDER, DATA_FORMAT_FILE)
+    with open(format_file) as f:
+        format = json.load(f)
+    return format
 
 
 if __name__ == "__main__":
