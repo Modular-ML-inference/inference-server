@@ -41,6 +41,7 @@ class SchedulerConfiguration(BaseModel):
     step_size: Optional[int]
     gamma: Optional[float]
 
+
 class DPConfiguration(BaseModel):
     num_sampled_clients: int
     init_clip_norm: float = 0.1
@@ -86,6 +87,7 @@ class LOTrainingConfigurationExtended(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
+
 class LOTrainingConfiguration(BaseModel):
     client_type_id: str
     server_address: str
@@ -115,3 +117,13 @@ class MLModel(MLModelData):
     model_version: str = Field(None, title="model version, str")
     model_id: Optional[str] = Field(None,
                                     title="id under which model is stored in gridfs")
+
+
+class MachineCapabilities(BaseModel):
+    storage: Optional[float] = Field(None, title="the amount of storage needed in gigabytes, float")
+    RAM: Optional[float] = Field(None, title="the amount of RAM needed in gigabytes, float")
+    GPU: bool = Field(False, title="whether the existence of a GPU is needed, bool")
+    preinstalled_libraries: Dict[str, str] = Field(None,
+                                                   title="a list of necessary/available preinstalled libraries with compliant versions")
+    available_models: Dict[str, str] = Field(None,
+                                                   title="a list of necessary/available models named by their name and version")

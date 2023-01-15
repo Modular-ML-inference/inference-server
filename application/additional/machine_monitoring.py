@@ -38,7 +38,7 @@ def setup_check_data_changes(timestep=5):
     while True:
         new_t_folder, new_t_format, new_t_pipeline = check_data_changes()
         if curr_time_folder != new_t_folder or curr_time_format != new_t_format or curr_time_pipeline != new_t_pipeline:
-            logging.log(logging.INFO, "The folder has been meaningfully modifed")
+            logging.log(logging.INFO, "The folder has been modifed")
             curr_time_folder = new_t_folder
             curr_time_pipeline = new_t_pipeline
             curr_time_format = new_t_format

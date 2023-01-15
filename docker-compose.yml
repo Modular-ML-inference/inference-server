@@ -17,8 +17,11 @@ services:
       - db
     volumes:
       - type: bind
-        source: ./data
+        source: ${FL_LOCAL_OP_DATA_FOLDER}
         target: /data
+      - type: bind
+        source: ./preprocessed
+        target: /preprocessed
   db:
     container_name: "db-${USER_INDEX}"
     restart: always

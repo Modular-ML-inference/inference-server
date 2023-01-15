@@ -1,4 +1,5 @@
 #!/bin/bash
+export FL_LOCAL_OP_DATA_FOLDER="./data"
 for ((i=0; i < $1; i++));
 do
   echo "Creating enabler of index $i"

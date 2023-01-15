@@ -112,7 +112,6 @@ Configuration for Twotronics demo:
 }
 ```
 
-This enabler can use homomorphic encryption for communication. In order to generate a new set of keys, run the file 
-```python
-application/generate_homomorphic_keys.py
-```.
+This enabler can use homomorphic encryption for communication. In order to generate a new set of keys, run the file `application/generate_homomorphic_keys.py`
+
+Additionally, in order to 
