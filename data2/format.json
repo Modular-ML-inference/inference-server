@@ -1,0 +1,22 @@
+{
+  "schema_id": "default_twotronics",
+  "data_types": {
+  "image": {
+    "folder": "Rim damage",
+    "size": [4096,3000],
+    "grayscale": false,
+    "segmented": false,
+    "masked": false
+  },
+  "label": {
+    "folder": "Rim damage",
+    "num_labels": 1,
+    "labels": ["Rim damage"]
+  }
+  },
+  "num_rows": 2,
+  "shuffled": false,
+  "train_size": 0.8,
+  "test_size": 0.2
+
+}

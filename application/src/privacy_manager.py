@@ -9,14 +9,14 @@ from application.src.custom_clients.hm_encryption_client import HMEncryptionClie
 
 class ClientPrivacyManager:
 
-    run_method = start_numpy_client
+    run_method = staticmethod(start_numpy_client)
 
     def wrap(self, client: NumPyClient, priv_configuration: Dict[str, Union[HMConfiguration, DPConfiguration]]):
         if "dp-adaptive" in priv_configuration:
             client = self.dp_wrap(client)
         if "homomorphic" in priv_configuration:
             client = self.homomorphic_wrap(client)
-            self.run_method = start_client
+            self.run_method = staticmethod(start_client)
         return client
 
     @staticmethod

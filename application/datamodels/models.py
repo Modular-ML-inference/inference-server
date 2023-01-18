@@ -67,7 +67,7 @@ class HMConfiguration(BaseModel):
     scheme: str = "CKKS"
 
 
-class LOTrainingConfigurationExtended(BaseModel):
+class LOTrainingConfiguration(BaseModel):
     client_type_id: str
     server_address: str
     eval_metrics: List[str]
@@ -82,27 +82,8 @@ class LOTrainingConfigurationExtended(BaseModel):
     optimizer_config: Optional[OptimizerConfiguration]
     scheduler_config: Optional[SchedulerConfiguration]
     warmup_config: Optional[WarmupConfiguration]
-    eval_metrics_value: float
-
-    class Config:
-        arbitrary_types_allowed = True
-
-
-class LOTrainingConfiguration(BaseModel):
-    client_type_id: str
-    server_address: str
-    optimizer: str
-    eval_metrics: List[str]
-    eval_func: str
-    num_classes: int
-    num_rounds: int
-    shape: List[int]
-    training_id: int
-    model_name: str
-    model_version: str
-    config: List[BasicConfiguration]
-    eval_metrics_value: float
     privacy_mechanisms: Dict[str, Union[HMConfiguration, DPConfiguration]] = Field(..., alias='privacy-mechanisms')
+    eval_metrics_value: float
 
     class Config:
         arbitrary_types_allowed = True

@@ -1,5 +1,5 @@
 from application.additional.utils import ModelLoader
-from application.config import FEDERATED_PORT, default_twotronics_config
+from application.config import FEDERATED_PORT
 from application.src.builders.keras_builder import KerasBuilder
 from application.src.builders.pytorch_builder import PytorchBuilder
 from application.src.privacy_manager import ClientPrivacyManager
@@ -12,7 +12,7 @@ async def start_client(training_id, config):
     loader = ModelLoader()
     library = loader.check_library(config.model_name, config.model_version)
     if library == "pytorch":
-        builder = PytorchBuilder(training_id, default_twotronics_config)
+        builder = PytorchBuilder(training_id, config)
     else:
         builder = KerasBuilder(training_id, config)
     unsafe_client = builder.product()

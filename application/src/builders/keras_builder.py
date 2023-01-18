@@ -2,13 +2,12 @@ from logging import log, INFO
 
 import keras as keras
 import flwr as fl
-import numpy as np
 import requests as requests
 import tensorflow as tf
 
 from application.additional.exceptions import BadConfigurationError
 from application.additional.utils import ModelLoader
-from application.config import ORCHESTRATOR_ADDRESS, default_twotronics_config
+from application.config import ORCHESTRATOR_ADDRESS
 from application.src.clientbuilder import FlowerClientBuilder
 from application.src.data_loader import BinaryDataLoader
 
