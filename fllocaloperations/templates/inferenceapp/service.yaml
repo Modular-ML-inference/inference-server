@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "inferenceapp.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "inferenceapp.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.inferenceapp.service.type }}
+  ports:
+    - port: {{ .Values.inferenceapp.service.port }}
+      targetPort: {{ .Values.inferenceapp.service.targetPort }}
+      protocol: {{ .Values.inferenceapp.service.protocol }}
+      {{- if and (or (eq .Values.inferenceapp.service.type "NodePort") (eq .Values.inferenceapp.service.type "LoadBalancer")) (not (empty .Values.inferenceapp.service.nodePort)) }}
+      nodePort: {{ .Values.inferenceapp.service.nodePort }}
+      {{ end }}
+  selector:
+    {{- include "inferenceapp.selectorLabels" . | nindent 4 }}

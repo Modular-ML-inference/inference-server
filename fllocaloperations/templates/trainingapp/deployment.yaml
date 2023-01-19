@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trainingapp.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "trainingapp.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.trainingapp.autoscaling.enabled }}
+  replicas: {{ .Values.trainingapp.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "trainingapp.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "trainingapp.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.trainingapp.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.enablerNodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if not .Values.enablerNodeSelector }}
+        {{- with .Values.trainingapp.nodeSelector }}
+      nodeSelector:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.trainingapp.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.trainingapp.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.trainingapp.podSecurityContext | nindent 8 }}
+      containers:
+        - name: trainingapp
+          securityContext:
+            {{- toYaml .Values.trainingapp.securityContext | nindent 12 }}
+          image: "{{ .Values.trainingapp.image.repository }}:{{ .Values.trainingapp.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.trainingapp.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.trainingapp.service.containerPort }}
+              protocol: {{ .Values.trainingapp.service.protocol }}
+          resources:
+            {{- toYaml .Values.trainingapp.resources | nindent 12 }}
+          {{- with .Values.trainingapp.envVars }}
+          env:
+            - name: EXAMPLE_ENV_VAR
+              value: {{ .exampleEnvVar | quote }}
+          {{- end }}

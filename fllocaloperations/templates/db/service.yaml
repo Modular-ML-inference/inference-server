@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "db.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "db.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.db.service.type }}
+  ports:
+    - port: {{ .Values.db.service.port }}
+      targetPort: {{ .Values.db.service.targetPort }}
+      protocol: {{ .Values.db.service.protocol }}
+      {{- if and (or (eq .Values.db.service.type "NodePort") (eq .Values.db.service.type "LoadBalancer")) (not (empty .Values.db.service.nodePort)) }}
+      nodePort: {{ .Values.db.service.nodePort }}
+      {{ end }}
+  selector:
+    {{- include "db.selectorLabels" . | nindent 4 }}

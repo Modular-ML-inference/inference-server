@@ -2,6 +2,7 @@ version: '3.8'
 services:
   local_operations:
     restart: always
+    image: karola766/trainingapp:latest
     build:
       context: application
       dockerfile: Dockerfile
@@ -24,12 +25,25 @@ services:
         target: /preprocessed
   db:
     container_name: "db-${USER_INDEX}"
+    build:
+      context: db
+      dockerfile: "Dockerfile.db"
     restart: always
-    image: mongo:latest
+    image: karola766/localdb:latest
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
       - default
+  inferenceapp:
+    image: karola766/inferenceapp:latest
+    restart: always
+    build:
+      context: inference_application
+      dockerfile: "Dockerfile.inf"
+    networks:
+      - default
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 networks:
   default:
