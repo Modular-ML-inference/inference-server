@@ -60,7 +60,7 @@ spec:
           {{- end }}
           volumeMounts:
             - name: data
-              mountPath: /path/in/container
+              mountPath: {{ .Values.db.persistence.mountPath}}
   volumeClaimTemplates:
     - metadata:
         name: data

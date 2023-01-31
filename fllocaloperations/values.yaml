@@ -61,6 +61,11 @@ trainingapp:
   envVars:
     exampleEnvVar: exampleValue
 
+  persistence:
+    mountPath: /data
+    accessModes:
+      - ReadWriteOnce
+    size: 50Mi
 
   imagePullSecrets: []
   nodeSelector: {}
@@ -178,7 +183,7 @@ db:
     exampleEnvVar: exampleValue
 
   persistence:
-    # mountPath: /path/in/container
+    mountPath: /bitnami/mongodb
     accessModes:
       - ReadWriteOnce
     size: 50Mi
