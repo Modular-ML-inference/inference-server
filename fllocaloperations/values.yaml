@@ -21,7 +21,7 @@ trainingapp:
   replicaCount: 1
   service:
     type: NodePort
-    nodePort: ""
+    nodePort: "30950"
     port: 9050
     targetPort: 9050
     containerPort: 9050
