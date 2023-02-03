@@ -64,3 +64,30 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: local-data-claim
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pvc-data-lo
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.trainingapp.persistence.hostPath }}
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: local-data-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: manual
