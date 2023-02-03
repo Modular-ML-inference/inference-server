@@ -64,7 +64,4 @@ Sample request body for post /job/config/{training_id}:
 
 This enabler can use homomorphic encryption for communication. In order to generate a new set of keys, run the file `application/generate_homomorphic_keys.py`
 
-Caveat for the kubernetes deployment: in order to properly deploy all containers and all volumes, you have to first create local volumes for the data in order to make sure that the volume location will be correct down the line.
-To do so, run the command:
-```sudo kubectl apply -f pvc-data.yaml```
-in the main directory.
+Caveat for the kubernetes deployment: in order to properly deploy all containers and all volumes, you have to look into the values.yaml file first and change a couple of local values.

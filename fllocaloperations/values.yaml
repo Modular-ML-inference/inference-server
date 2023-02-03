@@ -21,7 +21,7 @@ trainingapp:
   replicaCount: 1
   service:
     type: NodePort
-    nodePort: "30950"
+    nodePort: ""
     port: 9050
     targetPort: 9050
     containerPort: 9050
@@ -63,6 +63,7 @@ trainingapp:
 
   persistence:
     mountPath: /data
+    hostPath: "/home/wasielk/federated-experiments/fl-local-operations/data"
     accessModes:
       - ReadWriteOnce
     size: 50Mi
@@ -142,7 +143,7 @@ db:
   replicaCount: 1
   service:
     type: NodePort
-    nodePort: "30004"
+    nodePort: ""
     port: 27017
     targetPort: 27017
     containerPort: 27017
