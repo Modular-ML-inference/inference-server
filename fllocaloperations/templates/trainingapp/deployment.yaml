@@ -10,6 +10,9 @@ spec:
     storage: 5Gi
   accessModes:
     - ReadWriteOnce
+  claimRef:
+    name: local-data-claim
+    namespace: {{ .Release.Namespace | quote }}
   hostPath:
     path: {{ .Values.trainingapp.persistence.hostPath }}
 ---
@@ -17,6 +20,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: local-data-claim
+  namespace: {{ .Release.Namespace | quote }}
 spec:
   accessModes:
     - ReadWriteOnce
