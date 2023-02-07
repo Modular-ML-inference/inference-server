@@ -3,6 +3,9 @@
 
 
 Run `docker compose -p appv0 up --force-recreate --build -d` to run the server and set `USER_INDEX` to a given value beforehand, as well as the `p` argument in the command to `appv{index}`, to run multiple clients at the same time.
+You should also set up beforehand the value of `FL_LOCAL_OP_DATA_FOLDER`.
+
+You can also run `USER_INDEX=5 FL_LOCAL_OP_DATA_FOLDER="./data" docker compose up --force-recreate --build -d` to setup those necessary flags yourself without relying on a script.
 Use FastAPI functionalities to test the API on http://127.0.0.1:9050/docs.
 
 Additional changes:
