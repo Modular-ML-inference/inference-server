@@ -1,21 +1,3 @@
-kind: PersistentVolume
-apiVersion: v1
-metadata:
-  name: pvc-data-lo
-  labels:
-    type: local
-spec:
-  storageClassName: manual
-  capacity:
-    storage: 5Gi
-  accessModes:
-    - ReadWriteOnce
-  claimRef:
-    name: local-data-claim
-    namespace: {{ .Release.Namespace | quote }}
-  hostPath:
-    path: {{ .Values.trainingapp.persistence.hostPath }}
----
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:

@@ -1,4 +1,4 @@
-from typing import List, Dict, Union, Optional, Any
+from typing import List, Dict, Tuple, Union, Optional, Any
 
 from bson import ObjectId
 from pydantic import BaseModel, Field
@@ -30,16 +30,82 @@ class BasicConfiguration(BaseModel):
 
 
 class OptimizerConfiguration(BaseModel):
+    # pytorch-specific config (loosely speaking, some concepts repeat)
     optimizer: str
     lr: Optional[float]
+    rho: Optional[float]
+    eps: Optional[float]
+    foreach: Optional[bool]
+    maximize: Optional[bool]
+    lr_decay: Optional[float]
+    betas: Optional[Tuple[float, float]]
+    etas: Optional[Tuple[float, float]]
+    step_sizes: Optional[Tuple[float, float]]
+    lambd: Optional[float]
+    alpha: Optional[float]
+    t0: Optional[float]
+    max_iter: Optional[int]
+    max_eval: Optional[int]
+    tolerance_grad: Optional[float]
+    tolerance_change: Optional[float]
+    history_size: Optional[int]
+    line_search_fn: Optional[str]
+    momentum_decay: Optional[float]
+    dampening: Optional[float]
+    centered: Optional[bool]
+    nesterov: Optional[bool]
     momentum: Optional[float]
     weight_decay: Optional[float]
+    # keras specific config
+    learning_rate: Optional[float]
+    name: Optional[str]
+    clipnorm: Optional[float]
+    global_clipnorm: Optional[float]
+    use_ema: Optional[bool]
+    ema_momentum: Optional[float]
+    ema_overwrite_frequency: Optional[int]
+    jit_compile: Optional[bool]
+    epsilon: Optional[float]
+    clipvalue: Optional[float]
+    initial_accumulator_value: Optional[float]
+    beta_1: Optional[float]
+    beta_2: Optional[float]
+    beta_2_decay: Optional[float]
+    epsilon_1: Optional[float]
+    epsilon_2:Optional[float]
+    learning_rate_power: Optional[float]
+    l1_regularization_strength: Optional[float]
+    l2_regularization_strength: Optional[float]
+    l2_shrinkage_regularization_strength: Optional[float]
+    beta: Optional[float]
+
+
+    
 
 
 class SchedulerConfiguration(BaseModel):
     scheduler: str
+    # Let's start with PyTorch
     step_size: Optional[int]
     gamma: Optional[float]
+    last_epoch: Optional[int]
+    verbose: Optional[Union[bool, int]]
+    milestones: Optional[List[int]]
+    factor: Optional[float]
+    total_iters: Optional[int]
+    start_factor: Optional[float]
+    end_factor: Optional[float]
+    # And then go with Keras callbacks. 
+    monitor: Optional[str]
+    min_delta: Optional[int]
+    patience: Optional[int]
+    mode: Optional[str]
+    baseline: Optional[float]
+    restore_best_weights: Optional[bool]
+    start_from_epoch: Optional[int]
+    cooldown: Optional[int]
+    min_lr: Optional[float]
+
 
 
 class DPConfiguration(BaseModel):

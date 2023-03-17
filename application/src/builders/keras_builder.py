@@ -22,6 +22,12 @@ keras_optimizers = {
     "ftrl": tf.keras.optimizers.Ftrl
 }
 
+keras_callbacks = {
+    "earlystopping": tf.keras.callbacks.EarlyStopping,
+    "reducelronplateau": tf.keras.callbacks.ReduceLROnPlateau,
+    "terminateonnan": tf.keras.callbacks.TerminateOnNan
+}
+
 
 class KerasBuilder(FlowerClientBuilder):
 

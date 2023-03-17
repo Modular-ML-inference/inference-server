@@ -63,7 +63,6 @@ trainingapp:
 
   persistence:
     mountPath: /data
-    hostPath: "/home/wasielk/federated-experiments/fl-local-operations/data"
     accessModes:
       - ReadWriteOnce
     size: 50Mi
