@@ -1,7 +1,5 @@
 include:
   - project: 'sripas/gitlab-ci-templates'
-    file: 'docker-build.gitlab-ci.yml'
-  - project: 'sripas/gitlab-ci-templates'
     file: 'mirror-repo.gitlab-ci.yml'
   - project: 'sripas/gitlab-ci-templates'
     file: 'mirror-wiki.gitlab-ci.yml'
