@@ -36,8 +36,9 @@ class KerasBuilder(FlowerClientBuilder):
         self.client = KerasClient(training_id, configuration)
 
     def product(self):
-        self.add_optimizer()
         self.add_model()
+        self.add_optimizer()
+        self.add_scheduler()
         return self.client
 
     def add_model(self):
@@ -50,7 +51,7 @@ class KerasBuilder(FlowerClientBuilder):
                            metrics=self.configuration.eval_metrics)
 
     def add_optimizer(self) -> None:
-        config = default_twotronics_config.optimizer_config
+        config = self.configuration.optimizer_config
         input_conf = config.dict(exclude_unset=True)
         input_conf.pop("optimizer")
         try:
@@ -60,6 +61,16 @@ class KerasBuilder(FlowerClientBuilder):
             raise BadConfigurationError("optimizer")
         self.client.optimizer = optimizer
 
+    def add_scheduler(self):
+        scheduler_conf = self.configuration.scheduler_config
+        input_conf = scheduler_conf.dict(exclude_unset=True)
+        input_conf.pop("scheduler")
+        try:
+            self.client.lr_scheduler = keras_callbacks[
+                scheduler_conf.scheduler](optimizer=self.client.optimizer, **input_conf)
+        except AttributeError as e:
+            raise BadConfigurationError("scheduler/callback")
+        log(INFO, "Scheduler/callback added")
 
 class KerasClient(fl.client.NumPyClient):
 
