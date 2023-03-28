@@ -1,14 +1,19 @@
 import os
 from abc import ABC, abstractmethod
 
-from numpy import load
+from numpy import load, ndarray
 import tensorflow as tf
+from typing import Callable, Union, Tuple
+from torch.utils.data import DataLoader
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
 class DataLoader(ABC):
     path: str
+
+    """TODO: add parametrization and options of further customization. No time for generators
+    but we can have parameters describing the transformations and the right functions"""
 
     @abstractmethod
     def load_train(self):
@@ -19,7 +24,7 @@ class DataLoader(ABC):
         pass
 
 
-class BinaryDataLoader(ABC):
+class BinaryDataLoader(DataLoader):
     path: str
 
     def __init__(self, path=os.path.join(os.sep, "data")):
@@ -30,13 +35,14 @@ class BinaryDataLoader(ABC):
         y_train = load(os.path.join(self.path, "y_train.npy"), allow_pickle=True)
         return x_train, y_train
 
+
     def load_test(self):
         x_test = load(os.path.join(self.path, "x_test.npy"), allow_pickle=True)
         y_test = load(os.path.join(self.path, "y_test.npy"), allow_pickle=True)
         return x_test, y_test
 
-class BuiltInDataLoader(ABC):
-    method: function
+class BuiltInDataLoader(DataLoader):
+    method: Callable
     
     def __init__(self, method=tf.keras.datasets.cifar10.load_data):
         self.method = method

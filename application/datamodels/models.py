@@ -57,6 +57,7 @@ class OptimizerConfiguration(BaseModel):
     momentum: Optional[float]
     weight_decay: Optional[float]
     # keras specific config
+    amsgrad: Optional[bool]
     learning_rate: Optional[float]
     name: Optional[str]
     clipnorm: Optional[float]
@@ -80,9 +81,6 @@ class OptimizerConfiguration(BaseModel):
     beta: Optional[float]
 
 
-    
-
-
 class SchedulerConfiguration(BaseModel):
     scheduler: str
     # Let's start with PyTorch
@@ -97,7 +95,7 @@ class SchedulerConfiguration(BaseModel):
     end_factor: Optional[float]
     # And then go with Keras callbacks. 
     monitor: Optional[str]
-    min_delta: Optional[int]
+    min_delta: Optional[float]
     patience: Optional[int]
     mode: Optional[str]
     baseline: Optional[float]

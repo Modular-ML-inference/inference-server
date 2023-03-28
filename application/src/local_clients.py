@@ -2,7 +2,7 @@ from logging import INFO
 
 from flwr.common.logger import log
 
-from application.additional.utils import ModelLoader
+from application.additional.utils import BasicModelLoader
 from application.config import FEDERATED_PORT
 from application.src.builders.keras_builder import KerasBuilder
 from application.src.builders.pytorch_builder import PytorchBuilder
@@ -13,7 +13,7 @@ current_jobs = {}
 
 
 async def start_client(training_id, config):
-    loader = ModelLoader()
+    loader = BasicModelLoader()
     library = loader.check_library(config.model_name, config.model_version)
     if library == "pytorch":
         builder = PytorchBuilder(training_id, config)

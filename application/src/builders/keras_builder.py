@@ -5,11 +5,11 @@ import flwr as fl
 import requests as requests
 import tensorflow as tf
 
-from application.additional.exceptions import BadConfigurationError
-from application.additional.utils import ModelLoader
+from application.additional.exceptions import BadConfigurationError, ModelNotLoadedProperlyError
+from application.additional.utils import BasicModelLoader
 from application.config import ORCHESTRATOR_ADDRESS
 from application.src.clientbuilder import FlowerClientBuilder
-from application.src.data_loader import BinaryDataLoader
+from application.src.data_loader import BinaryDataLoader, BuiltInDataLoader
 
 keras_optimizers = {
     "sgd": tf.keras.optimizers.SGD,
@@ -25,7 +25,7 @@ keras_optimizers = {
 keras_callbacks = {
     "earlystopping": tf.keras.callbacks.EarlyStopping,
     "reducelronplateau": tf.keras.callbacks.ReduceLROnPlateau,
-    "terminateonnan": tf.keras.callbacks.TerminateOnNan
+    "terminateonnan": tf.keras.callbacks.TerminateOnNaN
 }
 
 
@@ -36,30 +36,41 @@ class KerasBuilder(FlowerClientBuilder):
         self.client = KerasClient(training_id, configuration)
 
     def product(self):
-        self.add_model()
         self.add_optimizer()
         self.add_scheduler()
+        self.add_model()
         return self.client
 
-    def add_model(self):
-        loader = ModelLoader()
-        log(INFO, "model")
-        loader.load(self.configuration.model_name, self.configuration.model_version)
-        self.client.model = keras.models.load_model(ModelLoader.temp_dir)
-        loader.cleanup()
-        self.client.model.compile(self.client.optimizer, self.configuration.eval_func,
-                           metrics=self.configuration.eval_metrics)
+    def add_model(self, loader_class = BasicModelLoader):
+        loader = loader_class()
+        log(INFO, "Model in loading")
+        try:
+            loader.load(self.configuration.model_name, self.configuration.model_version)
+            self.client.model = keras.models.load_model(loader.temp_dir)
+            self.client.model.compile(self.client.optimizer, self.configuration.eval_func,
+                            metrics=self.configuration.eval_metrics)
+        except BaseException as e:
+            log(INFO, "Model not loaded properly")
+            raise ModelNotLoadedProperlyError(model_name = self.configuration.model_name, model_version = self.configuration.model_version)
+        finally:
+            loader.cleanup()
+        log(INFO, "Model properly loaded")
 
     def add_optimizer(self) -> None:
         config = self.configuration.optimizer_config
         input_conf = config.dict(exclude_unset=True)
         input_conf.pop("optimizer")
         try:
-            optimizer = keras_optimizers[self.configuration.optimizer](
+            optimizer = keras_optimizers[self.configuration.optimizer_config.optimizer](
                 **input_conf)
         except AttributeError as e:
             raise BadConfigurationError("optimizer")
+        except KeyError as e:
+            raise BadConfigurationError("optimizer")
+        except TypeError as e:
+            raise BadConfigurationError("optimizer")
         self.client.optimizer = optimizer
+        log(INFO, "Optimizer added")
 
     def add_scheduler(self):
         scheduler_conf = self.configuration.scheduler_config
@@ -67,8 +78,12 @@ class KerasBuilder(FlowerClientBuilder):
         input_conf.pop("scheduler")
         try:
             self.client.lr_scheduler = keras_callbacks[
-                scheduler_conf.scheduler](optimizer=self.client.optimizer, **input_conf)
+                scheduler_conf.scheduler](**input_conf)
         except AttributeError as e:
+            raise BadConfigurationError("scheduler/callback")
+        except KeyError as e:
+            raise BadConfigurationError("scheduler/callback")
+        except TypeError as e:
             raise BadConfigurationError("scheduler/callback")
         log(INFO, "Scheduler/callback added")
 
@@ -78,7 +93,7 @@ class KerasClient(fl.client.NumPyClient):
         self.priv_config = config
         self.round = 1
         self.training_id = training_id
-        self.data_loader = BinaryDataLoader()
+        self.data_loader = BuiltInDataLoader()
         (self.x_train, self.y_train) = self.data_loader.load_train()
         (self.x_test, self.y_test) = self.data_loader.load_test()
 
@@ -91,8 +106,13 @@ class KerasClient(fl.client.NumPyClient):
         epochs = self.priv_config.config[0].epochs
         batch_size = self.priv_config.config[0].batch_size
         steps_per_epoch = self.priv_config.config[0].steps_per_epoch
+        # Set up the necessary callback
+        callbacks = [MyCustomCallback()]
+        # Add a custom callback if so set up
+        if self.lr_scheduler:
+            callbacks.append(self.lr_scheduler)
         self.model.fit(self.x_train, self.y_train, epochs=epochs, batch_size=batch_size,
-                       steps_per_epoch=steps_per_epoch, callbacks=[MyCustomCallback()])
+                       steps_per_epoch=steps_per_epoch, callbacks=callbacks)
         return self.model.get_weights(), len(self.x_train), {}
 
     def evaluate(self, parameters, config):
