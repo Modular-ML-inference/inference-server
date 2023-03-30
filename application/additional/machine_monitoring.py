@@ -18,8 +18,8 @@ def check_data_changes(folder=DATA_FOLDER):
     or the number of files in the directory has changed.
     """
     time_folder = os.path.getmtime(folder)
-    time_format = os.path.getmtime(os.path.join(folder, DATA_FORMAT_FILE))
-    time_pipeline = os.path.getmtime(os.path.join(folder, DATA_PIPELINE_FILE))
+    time_format = os.path.getmtime(os.path.join(folder, DATA_FORMAT_FILE)) if os.path.isfile(os.path.join(folder, DATA_FORMAT_FILE)) else None
+    time_pipeline = os.path.getmtime(os.path.join(folder, DATA_PIPELINE_FILE)) if os.path.isfile(os.path.join(folder, DATA_PIPELINE_FILE)) else None
     return time_folder, time_format, time_pipeline
 
 

@@ -67,4 +67,12 @@ Sample request body for post /job/config/{training_id}:
 
 This enabler can use homomorphic encryption for communication. In order to generate a new set of keys, run the file `application/generate_homomorphic_keys.py`
 
-Caveat for the kubernetes deployment: in order to properly deploy all containers and all volumes, you have to look into the values.yaml file first and change a couple of local values.
+# Kubernetes configuration
+
+In order to properly set up the enabler with the use of Helm charts, first you have to set up the appropriate configuration. For this purposes, the `fllocalops-config-map.yaml` is included in this repository. This is a ConfigMap containing information that may be specific to this deployment that the application must be able to access.After performing appropriate modifications, run `kubectl apply -f fllocalops-config-map.yaml` to create the ConfigMap.
+
+Before running the helm chart, you also have to set up a new (in particular, at this moment I have set up this persistent volume to not be reusable) PV. To do so, first go to `local-pv.yaml` and make sure that path placed there is an absolute path to the volume with your training data in your repository. Then, run `kubectl apply -f local-pv.yaml` to create the persistent volume.
+
+Finally, run `helm install fllocaloperationslocal fllocaloperations` in order to properly install the release using Helm charts.
+
+You can later use `kubectl port-forward <podname> <hostport>:9050` to forward port to your localhost and easily set up local configuration on `127.0.0.1:<hostport>/docs`.

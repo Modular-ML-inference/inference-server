@@ -66,9 +66,9 @@ spec:
           resources:
             {{- toYaml .Values.trainingapp.resources | nindent 12 }}
           {{- with .Values.trainingapp.envVars }}
-          env:
-            - name: EXAMPLE_ENV_VAR
-              value: {{ .exampleEnvVar | quote }}
+          envFrom:
+            - configMapRef:
+                name: fllocalops-configmap
           {{- end }}
           volumeMounts:
             - mountPath: /data

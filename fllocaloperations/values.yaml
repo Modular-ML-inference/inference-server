@@ -14,7 +14,7 @@ trainingapp:
   tier: external
   image:
     repository: karola766/trainingapp
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
 
@@ -77,7 +77,7 @@ inferenceapp:
   tier: internal
   image:
     repository: karola766/inferenceapp
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
 
@@ -135,7 +135,7 @@ db:
   tier: internal
   image:
     repository: karola766/localdb
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
 

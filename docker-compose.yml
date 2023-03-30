@@ -7,6 +7,21 @@ services:
       context: application
       dockerfile: Dockerfile
     environment:
+      - HOST=0.0.0.0
+      - PORT=9050
+      - DB_PORT=27017
+      - DATA_FORMAT_FILE=format.json
+      - DATA_PIPELINE_FILE=transformation_pipeline.json
+      - DATA_FOLDER=/data
+      - PREPROCESSED_FOLDER=/preprocessed
+      - REPOSITORY_ADDRESS=http://flrepository:9012
+      - ORCHESTRATOR_ADDRESS=http://fl-orchestrator-app:5000
+      - FEDERATED_PORT=8080
+      - SERVER_ADDRESS=fl-training-collector_trainingmain_1
+      - DATABASE_NAME=db-0
+      - TOTAL_LOCAL_OPERATIONS=1
+      - HM_SECRET_FILE=secret.txt
+      - HM_PUBLIC_FILE=public.txt
       - USER_INDEX=0
       - FL_LOCAL_OP_DATA_FOLDER="./data"
     networks:

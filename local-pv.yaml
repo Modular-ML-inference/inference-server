@@ -8,10 +8,11 @@ spec:
   storageClassName: manual
   capacity:
     storage: 5Gi
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce
   claimRef:
     name: local-data-claim
+    namespace: default
   hostPath:
-    path: "data"
+    path: "/home/karokaro/assist-repositories/fl-local-operations/data"

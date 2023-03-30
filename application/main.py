@@ -39,7 +39,7 @@ async def receive_updated(training_id, data: LOTrainingConfiguration, background
 @app.post("/model/")
 def receive_conf(model: MLModel):
     try:
-        client = MongoClient(DATABASE_NAME, DB_PORT)
+        client = MongoClient(DATABASE_NAME, int(DB_PORT))
         db = client.repository
         db.models.insert_one(model.dict(by_alias=True))
     except Exception as e:
@@ -75,7 +75,7 @@ def retrieve_status():
 
 @app.get("/job/total")
 def retrieve_total_local_operations():
-    return Response(content=TOTAL_LOCAL_OPERATIONS)
+    return Response(content=int(TOTAL_LOCAL_OPERATIONS))
 
 
 @app.post("/capabilities")
@@ -108,4 +108,4 @@ def retrieve_current_format():
 if __name__ == "__main__":
     daemon = Thread(target=setup_check_data_changes, daemon=True, name='Data Modification Monitor')
     daemon.start()
-    uvicorn.run("main:app", host=HOST, port=PORT)
+    uvicorn.run("main:app", host=HOST, port=int(PORT))

@@ -1,0 +1,21 @@
+kind: ConfigMap 
+apiVersion: v1 
+metadata:
+  name: fllocalops-configmap
+data:
+  # Configuration values can be set as key-value properties
+  HOST: 0.0.0.0
+  PORT: "9050"
+  DB_PORT: "27017"
+  DATA_FORMAT_FILE: "format.json"
+  DATA_PIPELINE_FILE: "transformation_pipeline.json"
+  DATA_FOLDER: "/data"
+  PREPROCESSED_FOLDER: "/preprocessed"
+  REPOSITORY_ADDRESS: "http://flrepositorylocaldb-flrepositorydb-flrepository.default.svc.cluster.local:9012"
+  ORCHESTRATOR_ADDRESS: "http://fl-orchestrator-app:5000"
+  FEDERATED_PORT: "8080"
+  SERVER_ADDRESS: "fltrainingcollectorlocal-trainingmain-svc2"
+  DATABASE_NAME: f'fllocaloperationslocal-db.default.svc.cluster.local'
+  TOTAL_LOCAL_OPERATIONS: "1"
+  HM_SECRET_FILE: "secret.txt"
+  HM_PUBLIC_FILE: "public.txt"
