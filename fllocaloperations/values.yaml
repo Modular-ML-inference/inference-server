@@ -27,6 +27,13 @@ trainingapp:
     containerPort: 9050
     protocol: TCP
 
+  service2:
+    type: NodePort
+    nodePort: ""
+    port: 80
+    targetPort: 8080
+    containerPort: 8080
+
   # The specification of the resources is needed for the proper functioning 
   # of the Smart Orchestrator enabler (requests)
   # and of the Resource provisioning enabler (limits)
@@ -65,7 +72,7 @@ trainingapp:
     mountPath: /data
     accessModes:
       - ReadWriteOnce
-    size: 50Mi
+    size: 3Gi
 
   imagePullSecrets: []
   nodeSelector: {}

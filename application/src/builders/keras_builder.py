@@ -4,6 +4,7 @@ import keras as keras
 import flwr as fl
 import requests as requests
 import tensorflow as tf
+import os
 
 from application.additional.exceptions import BadConfigurationError, ModelNotLoadedProperlyError
 from application.additional.utils import BasicModelLoader
@@ -46,7 +47,9 @@ class KerasBuilder(FlowerClientBuilder):
         log(INFO, "Model in loading")
         try:
             loader.load(self.configuration.model_name, self.configuration.model_version)
-            self.client.model = keras.models.load_model(loader.temp_dir)
+            load_path = loader.check_loading_path(loader.temp_dir)
+            log(INFO, f'Model loading at path {load_path}')
+            self.client.model = keras.models.load_model(load_path)
             self.client.model.compile(self.client.optimizer, self.configuration.eval_func,
                             metrics=self.configuration.eval_metrics)
         except BaseException as e:

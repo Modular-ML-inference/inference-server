@@ -15,7 +15,7 @@ data:
   ORCHESTRATOR_ADDRESS: "http://fl-orchestrator-app:5000"
   FEDERATED_PORT: "8080"
   SERVER_ADDRESS: "fltrainingcollectorlocal-trainingmain-svc2"
-  DATABASE_NAME: f'fllocaloperationslocal-db.default.svc.cluster.local'
+  DATABASE_NAME: "fllocaloperationslocal-db.default.svc.cluster.local"
   TOTAL_LOCAL_OPERATIONS: "1"
   HM_SECRET_FILE: "secret.txt"
   HM_PUBLIC_FILE: "public.txt"
