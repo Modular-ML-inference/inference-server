@@ -3,7 +3,7 @@ from typing import Dict, Union
 from flwr.client import NumPyClient, start_numpy_client, start_client
 from flwr.client.dpfedavg_numpy_client import DPFedAvgNumPyClient
 
-from application.datamodels.models import DPConfiguration, HMConfiguration
+from datamodels.models import DPConfiguration, HMConfiguration
 from application.src.custom_clients.hm_encryption_client import HMEncryptionClient
 
 

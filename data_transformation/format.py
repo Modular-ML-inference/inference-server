@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from application.data_transformation.exceptions import BadDataFormatException
+from data_transformation.exceptions import BadDataFormatException
 
 
 class DataFormat(ABC):
@@ -24,5 +24,3 @@ class DataFormat(ABC):
     @abstractmethod
     def validate_format(self, instance, schema):
         """A method which checks whether the format complies with the predefined schema"""
-
-

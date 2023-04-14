@@ -1,1 +1,11 @@
-FROM docker.io/bitnami/mongodb:6.0
+FROM python:3.8.3-slim-buster
+WORKDIR /code
+COPY requirements.txt /code/requirements.txt
+RUN /usr/local/bin/python -m pip install --upgrade pip
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+COPY . /code/inference_application
+COPY ../data_transformation /code/data_transformation
+ENV PYTHONPATH "${PYTHONPATH}:/code/inference_application"
+ENV PYTHONPATH "${PYTHONPATH}:/code/data_transformation"
+
+CMD python3 ./inference_application/main.py

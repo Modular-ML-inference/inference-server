@@ -8,10 +8,10 @@ import requests
 import copy
 import tensorflow
 from application.additional.exceptions import BadConfigurationError, ModelNotLoadedProperlyError
-from application.additional.utils import ModelLoader
+from data_transformation.loader import ModelLoader
 
-from application.datamodels.models import LOTrainingConfiguration
-from application.src.builders.keras_builder import KerasBuilder
+from datamodels.models import LOTrainingConfiguration
+from application.src.builders.keras_builder import KerasBuilder, KerasClient
 
 # Set up the test environment.
 
@@ -79,17 +79,19 @@ class KerasMockModelLoaderBroken(ModelLoader):
 
 def test_model_load_unable():
   builder = KerasBuilder(training_id=13, configuration=keras_test_config)
+  builder.client = KerasClient(12, keras_test_config)
   builder.client.optimizer="adam"
   with pytest.raises(ModelNotLoadedProperlyError) as custom_error:
-      builder.add_model(loader_class=KerasMockModelLoaderBroken)
+      builder.client.model = builder.add_model(loader_class=KerasMockModelLoaderBroken)
   assert keras_test_config.model_name in str(custom_error)
   assert keras_test_config.model_version in str(custom_error)
   assert not hasattr(builder.client, "model")
 
 def test_model_load_proper():
   builder = KerasBuilder(training_id=13, configuration=keras_test_config)
+  builder.client = KerasClient(12, keras_test_config)
   builder.client.optimizer="adam"
-  builder.add_model(loader_class=KerasMockModelLoader)
+  builder.client.model = builder.add_model(loader_class=KerasMockModelLoader)
   assert len(builder.client.model.layers) == 6
   assert type(builder.client.model.optimizer) == tensorflow.optimizers.Adam
 
@@ -98,8 +100,9 @@ def test_optimizer_load_unable_bad_optimizer_name():
   bad_configuration = copy.deepcopy(keras_test_config)
   bad_configuration.optimizer_config.optimizer = "bad-keyword"
   builder = KerasBuilder(training_id=13, configuration=bad_configuration)
+  builder.client = KerasClient(12, keras_test_config)
   with pytest.raises(BadConfigurationError) as custom_error:
-      builder.add_optimizer()
+      builder.client.optimizer = builder.add_optimizer()
   assert "optimizer" in str(custom_error)
   assert not hasattr(builder.client, "model")
 
@@ -108,14 +111,16 @@ def test_optimizer_load_unable_bad_optimizer_parameters():
   bad_configuration = copy.deepcopy(keras_test_config)
   bad_configuration.optimizer_config.lambd = 0.0013
   builder = KerasBuilder(training_id=13, configuration=bad_configuration)
+  builder.client = KerasClient(12, keras_test_config)
   with pytest.raises(BadConfigurationError) as custom_error:
-      builder.add_optimizer()
+      builder.client.optimizer = builder.add_optimizer()
   assert "optimizer" in str(custom_error)
   assert not hasattr(builder.client, "optimizer")
 
 def test_optimizer_load_proper():
   builder = KerasBuilder(training_id=13, configuration=keras_test_config)
-  builder.add_optimizer()
+  builder.client = KerasClient(12, keras_test_config)
+  builder.client.optimizer = builder.add_optimizer()
   assert type(builder.client.optimizer) == tensorflow.optimizers.Adam
   assert builder.client.optimizer.learning_rate == 0.005
 
@@ -124,8 +129,9 @@ def test_scheduler_load_unable_bad_scheduler_name():
   bad_configuration = copy.deepcopy(keras_test_config)
   bad_configuration.scheduler_config.scheduler = "bad-keyword"
   builder = KerasBuilder(training_id=13, configuration=bad_configuration)
+  builder.client = KerasClient(12, keras_test_config)
   with pytest.raises(BadConfigurationError) as custom_error:
-      builder.add_scheduler()
+      builder.client.lr_scheduler = builder.add_scheduler()
   assert "scheduler" in str(custom_error)
   assert not hasattr(builder.client, "scheduler")
 
@@ -134,13 +140,15 @@ def test_scheduler_load_unable_bad_optimizer_parameters():
   bad_configuration = copy.deepcopy(keras_test_config)
   bad_configuration.scheduler_config.monitor = 0.0013
   builder = KerasBuilder(training_id=13, configuration=bad_configuration)
+  builder.client = KerasClient(12, keras_test_config)
   with pytest.raises(BadConfigurationError) as custom_error:
-      builder.add_scheduler()
+      builder.client.lr_scheduler = builder.add_scheduler()
   assert "scheduler" in str(custom_error)
   assert not hasattr(builder.client, "scheduler")
 
 def test_scheduler_load_proper():
   builder = KerasBuilder(training_id=13, configuration=keras_test_config)
-  builder.add_scheduler()
+  builder.client = KerasClient(12, keras_test_config)
+  builder.client.lr_scheduler = builder.add_scheduler()
   assert type(builder.client.lr_scheduler) == tensorflow.keras.callbacks.ReduceLROnPlateau
   assert builder.client.lr_scheduler.min_delta == 0.0003

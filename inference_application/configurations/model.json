@@ -1,0 +1,13 @@
+{
+    "model_name": "fall-detection",
+    "model_version": "pilot-2-1",
+    "library": "tflite",
+    "input_format": {
+        "data_types":{
+            "numerical": {
+                "size": [1,5,4],
+                "normalized": true
+         }   
+        }
+    }
+}
