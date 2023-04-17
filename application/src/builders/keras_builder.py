@@ -136,5 +136,8 @@ class KerasClient(fl.client.NumPyClient):
 
 class MyCustomCallback(keras.callbacks.Callback):
     def on_epoch_begin(self, epoch , logs=None):
-        query = requests.get(f"{ORCHESTRATOR_ADDRESS}/recoverTrainingEpochs"f"/{str(epoch)}"f"/{str(epochs)}")
-        return query
+        try:
+            query = requests.get(f"{ORCHESTRATOR_ADDRESS}/recoverTrainingEpochs"f"/{str(epoch)}"f"/{str(epochs)}")
+            return query
+        except ConnectionError as e:
+            log(INFO, f'Could not connect to orchestrator on {ORCHESTRATOR_ADDRESS}')

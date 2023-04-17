@@ -92,9 +92,9 @@ inferenceapp:
   service:
     type: NodePort
     nodePort: ""
-    port: 80
-    targetPort: 80
-    containerPort: 80
+    port: 50051
+    targetPort: 50051
+    containerPort: 50051
     protocol: TCP
 
   # The specification of the resources is needed for the proper functioning 

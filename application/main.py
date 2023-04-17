@@ -78,7 +78,7 @@ def retrieve_total_local_operations():
     return Response(content=int(TOTAL_LOCAL_OPERATIONS))
 
 
-@app.post("/capabilities")
+@app.get("/capabilities")
 def retrieve_capabilities():
     """
     An endpoint that returns the current capabilities of a given Local Operations instance
@@ -92,7 +92,7 @@ def retrieve_capabilities():
     return m
 
 
-@app.post("/format")
+@app.get("/format")
 def retrieve_current_format():
     """
     An endpoint that returns the current format of the data

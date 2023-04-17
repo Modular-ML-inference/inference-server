@@ -1,11 +1,13 @@
 FROM python:3.8.3-slim-buster
 WORKDIR /code
-COPY requirements.txt /code/requirements.txt
+COPY inference_application/requirements.txt /code/requirements.txt
 RUN /usr/local/bin/python -m pip install --upgrade pip
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
-COPY . /code/inference_application
-COPY ../data_transformation /code/data_transformation
+COPY inference_application/ /code/inference_application
+COPY data_transformation/ /code/data_transformation
+COPY datamodels/ /code/datamodels
 ENV PYTHONPATH "${PYTHONPATH}:/code/inference_application"
 ENV PYTHONPATH "${PYTHONPATH}:/code/data_transformation"
+ENV PYTHONPATH "${PYTHONPATH}:/code/datamodels"
 
-CMD python3 ./inference_application/main.py
+CMD python3 inference_application/code/main.py
