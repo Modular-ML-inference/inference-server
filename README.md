@@ -79,7 +79,7 @@ With the newest release, an inference component, which can function independentl
 
 In order to properly set up the enabler with the use of Helm charts, first you have to set up the appropriate configuration. For this purposes, the `fllocalops-config-map.yaml` is included in this repository. This is a ConfigMap containing information that may be specific to this deployment that the application must be able to access.After performing appropriate modifications, run `kubectl apply -f fllocalops-config-map.yaml` to create the ConfigMap.
 
-Before running the helm chart, you also have to set up a new (in particular, at this moment I have set up this persistent volume to not be reusable) PV. To do so, first go to `local-pv.yaml` and make sure that path placed there is an absolute path to the volume with your training data in your repository. Then, run `kubectl apply -f local-pv.yaml` to create the persistent volume. You also have to run `kubectl cp ./data <podname>:/data` in order to copy data to persistent volume (I will try to figure out a better solution using rsync for later use).
+Before running the helm chart, you also have to set up a new (in particular, at this moment I have set up this persistent volume to not be reusable) PV. To do so, first go to `local-pv.yaml` and make sure that path placed there is an absolute path to the volume with your training data in your repository. Then, run `kubectl apply -f local-pv.yaml` to create the persistent volume. You also have to run `kubectl cp ./data <podname>:/` in order to copy data to persistent volume (I will try to figure out a better solution using rsync for later use).
 
 Finally, run `helm install fllocaloperationslocal fllocaloperations` in order to properly install the release using Helm charts.
 
@@ -90,7 +90,7 @@ A sample configuration that can be input on /docs and used to test the keras bui
 {"client_type_id": "local1",
   "server_address": "trainingcollectorlocal-trainingmain-svc2",
   "eval_metrics": [
-    "precision", "recall"
+    "accuracy"
   ],
   "eval_func": "categorical_crossentropy",
   "num_classes": 10,
