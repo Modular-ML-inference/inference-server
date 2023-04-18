@@ -1,0 +1,2 @@
+datamodels==0.8.2
+numpy==1.23.5
