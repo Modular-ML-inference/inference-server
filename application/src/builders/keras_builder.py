@@ -139,5 +139,5 @@ class MyCustomCallback(keras.callbacks.Callback):
         try:
             query = requests.get(f"{ORCHESTRATOR_ADDRESS}/recoverTrainingEpochs"f"/{str(epoch)}"f"/{str(epochs)}")
             return query
-        except ConnectionError as e:
+        except requests.exceptions.ConnectionError as e:
             log(INFO, f'Could not connect to orchestrator on {ORCHESTRATOR_ADDRESS}')

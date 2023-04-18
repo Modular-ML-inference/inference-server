@@ -71,6 +71,10 @@ This enabler can use homomorphic encryption for communication. In order to gener
 
 A custom transformation should be generated as a class located inside the data_transformation module (TODO: provide data transformation generation scripts).
 
+# Inference application
+
+With the newest release, an inference component, which can function independently from the training component, has been added. The inference component uses gRPC for lightweight communication. It allows for the configuration setup through the modification of files located in configurations before the image generation (a more sophisticated and dynamic configuration process will be added to the next release, this rudimentary system will, however, be enough for Pilot 2 tests). The inference component is, by default, installed with the rest of the Helm chart. Then it can be accessed through service `fllocaloperationslocal-inferenceapp` on port `50051` according to the specification located in `inference_application/code/proto/basic-inference.proto`.
+
 # Kubernetes configuration
 
 In order to properly set up the enabler with the use of Helm charts, first you have to set up the appropriate configuration. For this purposes, the `fllocalops-config-map.yaml` is included in this repository. This is a ConfigMap containing information that may be specific to this deployment that the application must be able to access.After performing appropriate modifications, run `kubectl apply -f fllocalops-config-map.yaml` to create the ConfigMap.
