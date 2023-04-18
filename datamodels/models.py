@@ -123,13 +123,16 @@ class WarmupConfiguration(BaseModel):
     warmup_factor: float
     scheduler_conf: SchedulerConfiguration
 
+class TrainingException(BaseModel):
+    stage: str
+    reason: str
+
 
 class HMConfiguration(BaseModel):
     poly_modulus_degree: int = 8192
     coeff_mod_bit_sizes: List[int] = [60, 40, 40]
     scale_bits: int = 40
     scheme: str = "CKKS"
-
 
 class LOTrainingConfiguration(BaseModel):
     client_type_id: str
