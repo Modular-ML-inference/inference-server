@@ -9,7 +9,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import log_loss
 from sklearn.model_selection import train_test_split
 
-from application.src.clientbuilder import FlowerClientBuilder
+from application.src.clientbuilder import FlowerClientTrainingBuilder
 
 XY = Tuple[np.ndarray, np.ndarray]
 Dataset = Tuple[XY, XY]
@@ -123,13 +123,13 @@ class HMTestClient(fl.client.NumPyClient):
         return loss, len(self.X_test), {"accuracy": accuracy}
 
 
-class HMTestBuilder(FlowerClientBuilder):
+class HMTestBuilder(FlowerClientTrainingBuilder):
 
     def __init__(self, training_id, configuration):
         self.configuration = configuration
         self.client = HMTestClient(training_id, configuration)
 
-    def product(self):
+    def prepare_training(self):
         return self.client
 
     def add_model(self):

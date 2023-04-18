@@ -13,6 +13,25 @@ class BadDataFormatException(Exception):
         self.message = f"The current data format is non-compliant with the schema type of {schema_id}"
         super().__init__(self.message)
 
+class TransformationConfigurationInvalidException(Exception):
+    """Exception raised when the supported configuration of transformation is invalid 
+
+    Attributes:
+        transformation_id -- the id of the specific transformation that triggers the error"""
+
+    def __init__(self,  transformation_id):
+        self.transformation_id = transformation_id
+        self.message = f"The transformation " \
+                       f"{self.transformation_id} could not be properly loaded"
+        super().__init__(self.message)
+
+class TransformationPipelineConfigurationInsufficientException(Exception):
+    """Exception raised when the format and pipeline configuration is not sufficient in order 
+    to transform the data into a model-compliant form. """
+
+    def __init__(self):
+        self.message = "The format and pipeline configuration is not sufficient in order to transform the data into a model-compliant form."
+        super().__init__(self.message)
 
 class DataTransformationModelUnavailableException(Exception):
     """Exception raised when the data transformation relies on the existence

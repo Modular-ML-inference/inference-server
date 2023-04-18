@@ -67,6 +67,14 @@ Sample request body for post /job/config/{training_id}:
 
 This enabler can use homomorphic encryption for communication. In order to generate a new set of keys, run the file `application/generate_homomorphic_keys.py`
 
+# Data Transformation
+
+A custom transformation should be generated as a class located inside the data_transformation module (TODO: provide data transformation generation scripts).
+
+# Inference application
+
+With the newest release, an inference component, which can function independently from the training component, has been added. The inference component uses gRPC for lightweight communication. It allows for the configuration setup through the modification of files located in configurations before the image generation (a more sophisticated and dynamic configuration process will be added to the next release, this rudimentary system will, however, be enough for Pilot 2 tests). The inference component is, by default, installed with the rest of the Helm chart. Then it can be accessed through service `fllocaloperationslocal-inferenceapp` on port `50051` according to the specification located in `inference_application/code/proto/basic-inference.proto`.
+
 # Kubernetes configuration
 
 In order to properly set up the enabler with the use of Helm charts, first you have to set up the appropriate configuration. For this purposes, the `fllocalops-config-map.yaml` is included in this repository. This is a ConfigMap containing information that may be specific to this deployment that the application must be able to access.After performing appropriate modifications, run `kubectl apply -f fllocalops-config-map.yaml` to create the ConfigMap.
@@ -116,29 +124,48 @@ A sample configuration that can be input on /docs and used to test the keras bui
 Conversely, a sample config for twotronics is:
 ```json
 {
-  "strategy": "avg",
+  "client_type_id": "local1",
+  "server_address": "trainingcollectorlocal-trainingmain-svc2",
+  "eval_metrics": [
+    "precision", "recall"
+  ],
+  "eval_func": "categorical_crossentropy",
+  "num_classes": 10,
+  "num_rounds": 15,
+  "shape": [
+    32, 32, 3
+  ],
+  "training_id": "10",
   "model_name": "twotronics",
   "model_version": "demo",
-  "adapt_config": "custom",
-  "server_conf": {
-    "num_rounds": 3
-  },
-  "strategy_conf": {
-    "min_fit_clients" : "1",
-    "min_available_clients": "1",
-    "min_evaluate_clients": "1"
-  },
-"privacy-mechanisms":{
-},
-  "client_conf": [
-    {
-      "config_id" : "min_effort",
-      "batch_size": "64",
-      "steps_per_epoch" : "32",
-      "epochs" : "5",
-      "learning_rate" : "0.001"
-    }
+  "config": [
+    {"config_id": "min_effort",
+   "batch_size": "64",
+   "steps_per_epoch": "32",
+   "epochs": "1",
+   "learning_rate": "0.001"}
   ],
-  "configuration_id": "10"
+  "optimizer_config": {
+    "optimizer": "sgd",
+    "lr": "0.005",
+    "momentum": "0.9",
+    "weight_decay": "0.0005"
+  },
+  "scheduler_config": {
+    "scheduler": "steplr",
+    "step_size": "3",
+    "gamma": "0.1"
+  },
+  "warmup_config": {
+    "scheduler": "lambdalr",
+    "warmup_iters": "1000",
+    "warmup_epochs": "1",
+    "warmup_factor": "0.001",
+    "scheduler_conf": {
+      "scheduler": "lambdalr"
+    }
+  },
+  "privacy-mechanisms":{},
+  "eval_metrics_value": "0"
 }
 ```

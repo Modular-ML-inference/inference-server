@@ -5,6 +5,7 @@ from numpy import load, ndarray
 import tensorflow as tf
 from typing import Callable, Union, Tuple
 from torch.utils.data import DataLoader
+from tensorflow.keras.utils import to_categorical
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -49,8 +50,11 @@ class BuiltInDataLoader(DataLoader):
 
     def load_train(self):
         (x_train, y_train), (_, _) = self.method()
+        # TODO: move into a transformation
+        y_train = to_categorical(y_train, 10)
         return x_train, y_train
 
     def load_test(self):
         (_, _), (x_test, y_test) = self.method()
+        y_test = to_categorical(y_test, 10)
         return x_test, y_test

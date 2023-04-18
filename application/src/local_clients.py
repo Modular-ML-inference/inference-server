@@ -19,7 +19,7 @@ async def start_client(training_id, config):
         builder = PytorchBuilder(training_id, config)
     else:
         builder = KerasBuilder(training_id, config)
-    unsafe_client = builder.product()
+    unsafe_client = builder.prepare_training()
     privacy_manager = ClientPrivacyManager()
     client = privacy_manager.wrap(unsafe_client, config.privacy_mechanisms)
     log(INFO, f'The client tries to access the server on {config.server_address}:{FEDERATED_PORT}')

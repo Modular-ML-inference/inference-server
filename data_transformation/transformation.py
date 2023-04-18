@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any, List
 
-from application.datamodels.models import MachineCapabilities
+from datamodels.models import MachineCapabilities
 
 
 class DataTransformation(ABC):

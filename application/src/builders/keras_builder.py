@@ -9,7 +9,7 @@ import os
 from application.additional.exceptions import BadConfigurationError, ModelNotLoadedProperlyError
 from application.additional.utils import BasicModelLoader
 from application.config import ORCHESTRATOR_ADDRESS
-from application.src.clientbuilder import FlowerClientBuilder
+from application.src.clientbuilder import FlowerClientInferenceBuilder, FlowerClientTrainingBuilder
 from application.src.data_loader import BinaryDataLoader, BuiltInDataLoader
 
 keras_optimizers = {
@@ -30,17 +30,23 @@ keras_callbacks = {
 }
 
 
-class KerasBuilder(FlowerClientBuilder):
+class KerasBuilder(FlowerClientTrainingBuilder, FlowerClientInferenceBuilder):
 
-    def __init__(self, training_id, configuration):
+    def __init__(self, id, configuration):
         self.configuration = configuration
-        self.client = KerasClient(training_id, configuration)
+        self.id = id
 
-    def product(self):
-        self.add_optimizer()
-        self.add_scheduler()
-        self.add_model()
+    def prepare_training(self):
+        self.client = KerasClient(self.id, self.configuration)
+        self.client.optimizer = self.add_optimizer()
+        self.client.lr_scheduler = self.add_scheduler()
+        self.client.model = self.add_model()
+        self.client.model.compile(self.client.optimizer, self.configuration.eval_func,
+                            metrics=self.configuration.eval_metrics)
         return self.client
+    
+    def prepare_inference(self) -> None:
+        return self.add_model()
 
     def add_model(self, loader_class = BasicModelLoader):
         loader = loader_class()
@@ -49,15 +55,14 @@ class KerasBuilder(FlowerClientBuilder):
             loader.load(self.configuration.model_name, self.configuration.model_version)
             load_path = loader.check_loading_path(loader.temp_dir)
             log(INFO, f'Model loading at path {load_path}')
-            self.client.model = keras.models.load_model(load_path)
-            self.client.model.compile(self.client.optimizer, self.configuration.eval_func,
-                            metrics=self.configuration.eval_metrics)
+            model = keras.models.load_model(load_path)
         except BaseException as e:
             log(INFO, "Model not loaded properly")
             raise ModelNotLoadedProperlyError(model_name = self.configuration.model_name, model_version = self.configuration.model_version)
         finally:
             loader.cleanup()
         log(INFO, "Model properly loaded")
+        return model
 
     def add_optimizer(self) -> None:
         config = self.configuration.optimizer_config
@@ -72,15 +77,15 @@ class KerasBuilder(FlowerClientBuilder):
             raise BadConfigurationError("optimizer")
         except TypeError as e:
             raise BadConfigurationError("optimizer")
-        self.client.optimizer = optimizer
         log(INFO, "Optimizer added")
+        return optimizer
 
     def add_scheduler(self):
         scheduler_conf = self.configuration.scheduler_config
         input_conf = scheduler_conf.dict(exclude_unset=True)
         input_conf.pop("scheduler")
         try:
-            self.client.lr_scheduler = keras_callbacks[
+            lr_scheduler = keras_callbacks[
                 scheduler_conf.scheduler](**input_conf)
         except AttributeError as e:
             raise BadConfigurationError("scheduler/callback")
@@ -89,6 +94,7 @@ class KerasBuilder(FlowerClientBuilder):
         except TypeError as e:
             raise BadConfigurationError("scheduler/callback")
         log(INFO, "Scheduler/callback added")
+        return lr_scheduler
 
 class KerasClient(fl.client.NumPyClient):
 
@@ -130,5 +136,8 @@ class KerasClient(fl.client.NumPyClient):
 
 class MyCustomCallback(keras.callbacks.Callback):
     def on_epoch_begin(self, epoch , logs=None):
-        query = requests.get(f"{ORCHESTRATOR_ADDRESS}/recoverTrainingEpochs"f"/{str(epoch)}"f"/{str(epochs)}")
-        return query
+        try:
+            query = requests.get(f"{ORCHESTRATOR_ADDRESS}/recoverTrainingEpochs"f"/{str(epoch)}"f"/{str(epochs)}")
+            return query
+        except requests.exceptions.ConnectionError as e:
+            log(INFO, f'Could not connect to orchestrator on {ORCHESTRATOR_ADDRESS}')

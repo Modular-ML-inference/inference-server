@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package basic_inference;
+
+import "google/protobuf/struct.proto";
+
+message TransformationParams{
+    string id = 1;
+    map<string, google.protobuf.Value> params = 2;
+}
+
+message InferenceSetup{
+    string model_name = 1;
+    string model_version = 2;
+    repeated TransformationParams transformations = 3;
+}
+
+message InferenceSetupResponse{
+    int32 status = 1;
+    string message = 2;
+}
+
+service BasicInferenceSetup{
+    rpc setup(InferenceSetup) returns (InferenceSetupResponse) {}
+}
