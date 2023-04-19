@@ -1,3 +1,4 @@
+{{- if .Values.inferenceapp.fullDeployment.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -16,3 +17,4 @@ spec:
       {{ end }}
   selector:
     {{- include "trainingapp.selectorLabels" . | nindent 4 }}
+{{- end}}

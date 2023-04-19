@@ -169,3 +169,8 @@ Conversely, a sample config for twotronics is:
   "eval_metrics_value": "0"
 }
 ```
+
+## Inference-only deployment
+
+It is also possible to deploy only the inference service without the need for any additional dependencies. 
+In order to do so, please run `helm install fllocaloperationslocal fllocaloperations --set inferenceapp.fullDeployment.enabled=false`.

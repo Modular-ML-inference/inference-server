@@ -8,6 +8,66 @@ nameOverride: ""
 fullnameOverride: ""
 # Deploy all the components in the same node
 enablerNodeSelector: {}
+# Component inferenceapp values
+inferenceapp:
+  tier: internal
+  image:
+    repository: karola766/inferenceapp
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "latest"
+
+  replicaCount: 1
+  service:
+    type: NodePort
+    nodePort: ""
+    port: 50051
+    targetPort: 50051
+    containerPort: 50051
+    protocol: TCP
+
+  # The specification of the resources is needed for the proper functioning 
+  # of the Smart Orchestrator enabler (requests)
+  # and of the Resource provisioning enabler (limits)
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+  fullDeployment:
+    enabled: true
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  # Include here the environment variables to be used in the component's manifest (container section).
+  # Here and in the manifest is included an example.
+  envVars:
+    exampleEnvVar: exampleValue
+
+
+  imagePullSecrets: []
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 
 # Component trainingapp values
 trainingapp:
@@ -79,63 +139,7 @@ trainingapp:
   tolerations: []
   affinity: {}
 
-# Component inferenceapp values
-inferenceapp:
-  tier: internal
-  image:
-    repository: karola766/inferenceapp
-    pullPolicy: Always
-    # Overrides the image tag whose default is the chart appVersion.
-    tag: "latest"
 
-  replicaCount: 1
-  service:
-    type: NodePort
-    nodePort: ""
-    port: 50051
-    targetPort: 50051
-    containerPort: 50051
-    protocol: TCP
-
-  # The specification of the resources is needed for the proper functioning 
-  # of the Smart Orchestrator enabler (requests)
-  # and of the Resource provisioning enabler (limits)
-  resources: {}
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
-
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 3
-    targetCPUUtilizationPercentage: 80
-    # targetMemoryUtilizationPercentage: 80
-
-  podSecurityContext: {}
-    # fsGroup: 2000
-
-  securityContext: {}
-    # capabilities:
-    #   drop:
-    #   - ALL
-    # readOnlyRootFilesystem: true
-    # runAsNonRoot: true
-    # runAsUser: 1000
-
-  # Include here the environment variables to be used in the component's manifest (container section).
-  # Here and in the manifest is included an example.
-  envVars:
-    exampleEnvVar: exampleValue
-
-
-  imagePullSecrets: []
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
 
 # Component db values
 db:
