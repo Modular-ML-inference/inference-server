@@ -68,7 +68,7 @@ async def update_model(model_name: str, model_version: str, file: UploadFile = F
 
 # Returns statuses of currently running jobs by returning information
 # about the number of model ids and versions being ran
-@app.post("/job/status")
+@app.get("/job/status")
 def retrieve_status():
     return src.local_clients.current_jobs
 
