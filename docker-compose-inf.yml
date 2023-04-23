@@ -5,7 +5,7 @@ services:
     image: karola766/inferenceapp:latest
     build:
       context: .
-      dockerfile: "inference_application/Dockerfile.inf"
+      dockerfile: "Dockerfile"
     environment:
       - REPOSITORY_ADDRESS=http://flrepository:9012
     networks:
