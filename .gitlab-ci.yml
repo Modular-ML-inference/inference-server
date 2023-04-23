@@ -1,7 +1,18 @@
 include:
   - project: 'sripas/gitlab-ci-templates'
+    file: 'docker-build.gitlab-ci.yml'
+  - project: 'sripas/gitlab-ci-templates'
     file: 'mirror-repo.gitlab-ci.yml'
   - project: 'sripas/gitlab-ci-templates'
     file: 'mirror-wiki.gitlab-ci.yml'
   - project: 'sripas/gitlab-ci-templates'
     file: 'publish-docs.gitlab-ci.yml'
+  
+stages:
+  - docker-build
+  - mirror
+
+docker-build:
+  variables:
+    # Multi-arch build
+    ANT_DOCKER_ARCH: linux/amd64,linux/arm64
