@@ -195,3 +195,7 @@ class FLDataTransformationConfig(BaseModel):
 
 class FLDataTransformationPipelineConfig(BaseModel):
     configuration: Dict[str, List[FLDataTransformationConfig]]
+
+class WebsocketResponse(BaseModel):
+    status: str
+    message: Optional[str]

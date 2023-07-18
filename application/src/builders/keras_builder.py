@@ -8,7 +8,7 @@ import os
 
 from application.additional.exceptions import BadConfigurationError, ModelNotLoadedProperlyError
 from application.additional.utils import BasicModelLoader
-from application.config import ORCHESTRATOR_ADDRESS
+from application.config import ORCHESTRATOR_SVR_ADDRESS
 from application.src.clientbuilder import FlowerClientInferenceBuilder, FlowerClientTrainingBuilder
 from application.src.data_loader import BinaryDataLoader, BuiltInDataLoader
 
@@ -137,7 +137,7 @@ class KerasClient(fl.client.NumPyClient):
 class MyCustomCallback(keras.callbacks.Callback):
     def on_epoch_begin(self, epoch , logs=None):
         try:
-            query = requests.get(f"{ORCHESTRATOR_ADDRESS}/recoverTrainingEpochs"f"/{str(epoch)}"f"/{str(epochs)}")
+            query = requests.get(f"{ORCHESTRATOR_SVR_ADDRESS}/recoverTrainingEpochs"f"/{str(epoch)}"f"/{str(epochs)}")
             return query
         except requests.exceptions.ConnectionError as e:
-            log(INFO, f'Could not connect to orchestrator on {ORCHESTRATOR_ADDRESS}')
+            log(INFO, f'Could not connect to orchestrator on {ORCHESTRATOR_SVR_ADDRESS}')

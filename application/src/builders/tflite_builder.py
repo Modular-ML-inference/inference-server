@@ -6,7 +6,7 @@ import tensorflow as tf
 
 from application.additional.exceptions import ModelNotLoadedProperlyError
 from application.additional.utils import BasicModelLoader
-from application.config import ORCHESTRATOR_ADDRESS
+from application.config import ORCHESTRATOR_SVR_ADDRESS
 from application.src.clientbuilder import FlowerClientInferenceBuilder
 
 

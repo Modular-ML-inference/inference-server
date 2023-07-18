@@ -15,4 +15,4 @@ spec:
     name: local-data-claim
     namespace: default
   hostPath:
-    path: "/home/karokaro/assist-repositories/fl-local-operations/data"
+    path: "/local-operations/data"

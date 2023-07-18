@@ -12,7 +12,9 @@ COPY datamodels/ /code/datamodels
 ENV PYTHONPATH "${PYTHONPATH}:/code/application"
 ENV PYTHONPATH "${PYTHONPATH}:/code/data_transformation"
 ENV PYTHONPATH "${PYTHONPATH}:/code/datamodels"
+ENV FL_LO_STATE "READY"
 
 CMD python3 application/main.py
 
 EXPOSE 9050
+EXPOSE 80

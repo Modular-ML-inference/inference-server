@@ -15,6 +15,12 @@ spec:
       {{- if and (or (eq .Values.trainingapp.service.type "NodePort") (eq .Values.trainingapp.service.type "LoadBalancer")) (not (empty .Values.trainingapp.service.nodePort)) }}
       nodePort: {{ .Values.trainingapp.service.nodePort }}
       {{ end }}
+    - port: {{ .Values.trainingapp.ws.port }}
+      targetPort: {{ .Values.trainingapp.ws.targetPort }}
+      protocol: {{ .Values.trainingapp.ws.protocol }}
+      {{- if and (or (eq .Values.trainingapp.ws.type "NodePort") (eq .Values.trainingapp.ws.type "LoadBalancer")) (not (empty .Values.trainingapp.ws.nodePort)) }}
+      nodePort: {{ .Values.trainingapp.ws.nodePort }}
+      {{ end }}
   selector:
     {{- include "trainingapp.selectorLabels" . | nindent 4 }}
 {{- end}}

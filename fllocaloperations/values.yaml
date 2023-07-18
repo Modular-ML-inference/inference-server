@@ -12,7 +12,7 @@ enablerNodeSelector: {}
 inferenceapp:
   tier: internal
   image:
-    repository: karola766/inferenceapp
+    repository: gitlab.assist-iot.eu:5050/wp7/pilot-2/registry/inferenceapp
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
@@ -94,6 +94,13 @@ trainingapp:
     targetPort: 8080
     containerPort: 8080
 
+  ws:
+    type: NodePort
+    nodePort: ""
+    port: 30080
+    targetPort: 80
+    containerPort: 80
+
   # The specification of the resources is needed for the proper functioning 
   # of the Smart Orchestrator enabler (requests)
   # and of the Resource provisioning enabler (limits)
@@ -125,8 +132,6 @@ trainingapp:
 
   # Include here the environment variables to be used in the component's manifest (container section).
   # Here and in the manifest is included an example.
-  envVars:
-    exampleEnvVar: exampleValue
 
   persistence:
     mountPath: /data

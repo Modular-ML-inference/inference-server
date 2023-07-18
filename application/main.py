@@ -1,9 +1,11 @@
+import asyncio
 import json
 import os
 from http import HTTPStatus
 from threading import Thread
 
 import gridfs
+from application.ws_client import websocket_client
 import uvicorn
 
 from application.additional.machine_monitoring import check_storage, check_memory, check_gpu, check_packages, \
@@ -75,7 +77,7 @@ def retrieve_status():
 
 @app.get("/job/total")
 def retrieve_total_local_operations():
-    return Response(content=int(TOTAL_LOCAL_OPERATIONS))
+    return Response(content=TOTAL_LOCAL_OPERATIONS)
 
 
 @app.get("/capabilities")
@@ -106,6 +108,10 @@ def retrieve_current_format():
 
 
 if __name__ == "__main__":
+    # First, start the daemon monitoring data changes
     daemon = Thread(target=setup_check_data_changes, daemon=True, name='Data Modification Monitor')
     daemon.start()
+    # Then the websocket client
+    asyncio.get_event_loop().run_until_complete(websocket_client())
+    # Finally, the main server
     uvicorn.run("main:app", host=HOST, port=int(PORT))

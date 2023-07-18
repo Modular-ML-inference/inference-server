@@ -5,6 +5,7 @@ metadata:
 data:
   # Configuration values can be set as key-value properties
   HOST: 0.0.0.0
+  FL_LO_STATE: "READY"
   PORT: "9050"
   DB_PORT: "27017"
   DATA_FORMAT_FILE: "format.json"
@@ -12,7 +13,9 @@ data:
   DATA_FOLDER: "/data"
   PREPROCESSED_FOLDER: "/preprocessed"
   REPOSITORY_ADDRESS: "http://flrepositorylocaldb-flrepositorydb-flrepository.default.svc.cluster.local:9012"
-  ORCHESTRATOR_ADDRESS: "http://fl-orchestrator-app:5000"
+  ORCHESTRATOR_SVR_ADDRESS: "http://fl-orchestrator-app:5000" 
+  ORCHESTRATOR_WS_ADDRESS: "ws://fl-orchestrator-app:8765"
+  WS_TIMEOUT: 5
   FEDERATED_PORT: "8080"
   SERVER_ADDRESS: "fltrainingcollectorlocal-trainingmain-svc2"
   DATABASE_NAME: "fllocaloperationslocal-db.default.svc.cluster.local"
