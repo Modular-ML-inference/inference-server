@@ -9,13 +9,15 @@ metadata:
 spec:
   type: {{ .Values.trainingapp.service.type }}
   ports:
-    - port: {{ .Values.trainingapp.service.port }}
+    - name: main
+      port: {{ .Values.trainingapp.service.port }}
       targetPort: {{ .Values.trainingapp.service.targetPort }}
       protocol: {{ .Values.trainingapp.service.protocol }}
       {{- if and (or (eq .Values.trainingapp.service.type "NodePort") (eq .Values.trainingapp.service.type "LoadBalancer")) (not (empty .Values.trainingapp.service.nodePort)) }}
       nodePort: {{ .Values.trainingapp.service.nodePort }}
       {{ end }}
-    - port: {{ .Values.trainingapp.ws.port }}
+    - name: ws
+      port: {{ .Values.trainingapp.ws.port }}
       targetPort: {{ .Values.trainingapp.ws.targetPort }}
       protocol: {{ .Values.trainingapp.ws.protocol }}
       {{- if and (or (eq .Values.trainingapp.ws.type "NodePort") (eq .Values.trainingapp.ws.type "LoadBalancer")) (not (empty .Values.trainingapp.ws.nodePort)) }}

@@ -108,6 +108,7 @@ def retrieve_current_format():
 
 
 if __name__ == "__main__":
+    os.environ['FL_LO_STATE'] = 'READY'
     # First, start the daemon monitoring data changes
     daemon = Thread(target=setup_check_data_changes, daemon=True, name='Data Modification Monitor')
     daemon.start()
