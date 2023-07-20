@@ -17,7 +17,7 @@ async def websocket_client():
                     log(INFO, f'Websocket port available on {websocket.local_address}')
                     status = os.getenv('FL_LO_STATE')
                     # Turn it into a JSON and send
-                    asyncio.sleep(WS_TIMEOUT*1000)
+                    await asyncio.sleep(WS_TIMEOUT)
                     await websocket.send(status)
 
                     # Wait the server response

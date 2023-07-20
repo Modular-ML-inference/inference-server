@@ -10,6 +10,7 @@ spec:
   resources:
     requests:
       storage: 5Gi
+  volumeName: pvc-data-lo
   storageClassName: manual
 ---
 apiVersion: apps/v1
@@ -66,11 +67,9 @@ spec:
               protocol: {{ .Values.trainingapp.service.protocol }}
           resources:
             {{- toYaml .Values.trainingapp.resources | nindent 12 }}
-          {{- with .Values.trainingapp.envVars }}
           envFrom:
             - configMapRef:
                 name: fllocalops-configmap
-          {{- end }}
           volumeMounts:
             - mountPath: /data
               name: data
