@@ -1,8 +1,11 @@
 
 from data_transformation.exceptions import TransformationPipelineConfigurationInsufficientException
 from data_transformation.pipeline import BaseTransformationPipeline
+from prometheus_client import start_http_server, Summary
 from inference_application.code.inferencers.tflite_inferencer import TFLiteInferencer
 from inference_application.code.utils import InferenceFormatLoader, InferenceModelLoader, InferenceTransformationLoader
+
+TFLITE_PREPARATION_TIME = Summary('tflite_inference_pipeline_preparation_seconds', 'Time needed to set up TFLite inferencer')
 
 library_inferencers = {
     "tflite": TFLiteInferencer
@@ -35,6 +38,7 @@ class InferenceManager:
     def __init__(self):
         self.prepare_inference()
 
+    @TFLITE_PREPARATION_TIME.time()
     def prepare_inference(self):
         # Load up all elements
         data_format = self.load_data_format()

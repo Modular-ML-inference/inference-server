@@ -65,6 +65,7 @@ services:
       - default
     ports:
       - "50052:50051"
+      - "9001:9000"
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

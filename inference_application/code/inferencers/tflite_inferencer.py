@@ -1,4 +1,5 @@
 from inference_application.code.inferencers.base_inferencer import BaseInferencer
+from prometheus_client import Counter
 import os
 import numpy as np
 import tensorflow as tf

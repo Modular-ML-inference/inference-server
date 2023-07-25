@@ -25,6 +25,12 @@ inferenceapp:
     targetPort: 50051
     containerPort: 50051
     protocol: TCP
+  metrics:
+    type: NodePort
+    nodePort: ""
+    port: 9000
+    targetPort: 9000
+    containerPort: 9000
 
   # The specification of the resources is needed for the proper functioning 
   # of the Smart Orchestrator enabler (requests)
