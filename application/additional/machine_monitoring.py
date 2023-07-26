@@ -2,12 +2,23 @@ import logging
 import shutil
 import os
 from time import sleep
-
+from prometheus_client import Info, Gauge
 import pkg_resources
 import psutil
 
 from application.config import DATA_FOLDER, DATA_FORMAT_FILE, DATA_PIPELINE_FILE
 
+i_stor = Gauge('machine_capabilities_free_storage', 'Information on current machine capabilities as seen by FL LO (memory and storage in GB)')
+i_mem = Gauge('machine_capabilities_free_memory', 'Information on current machine capabilities as seen by FL LO (memory and storage in GB)')
+i_gpu = Gauge('machine_capabilities_gpu', 'Information on current machine capabilities as seen by FL LO (memory and storage in GB)')
+
+def check_machine_capabilities():
+    """                    
+    Update the values of Prometheus metrics to reflect the current state of available capabilities.
+    """
+    i_stor.set(check_storage())
+    i_mem.set(check_memory())
+    i_gpu.set(check_gpu())
 
 def check_data_changes(folder=DATA_FOLDER):
     """
@@ -36,6 +47,7 @@ def setup_check_data_changes(timestep=5):
 
     curr_time_folder, curr_time_format, curr_time_pipeline = check_data_changes()
     while True:
+        check_machine_capabilities()
         new_t_folder, new_t_format, new_t_pipeline = check_data_changes()
         if curr_time_folder != new_t_folder or curr_time_format != new_t_format or curr_time_pipeline != new_t_pipeline:
             logging.log(logging.INFO, "The folder has been modifed")

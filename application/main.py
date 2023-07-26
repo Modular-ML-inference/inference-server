@@ -9,8 +9,9 @@ from application.ws_client import websocket_client
 from multiprocessing import Process
 import uvicorn
 
-from application.additional.machine_monitoring import check_storage, check_memory, check_gpu, check_packages, \
+from application.additional.machine_monitoring import check_packages, \
     check_models, setup_check_data_changes
+from application.additional.utils import check_storage, check_memory, check_gpu
 from config import PORT, HOST, DB_PORT, TOTAL_LOCAL_OPERATIONS, PREPROCESSED_FOLDER, DATA_FORMAT_FILE, DATA_FOLDER
 from fastapi import BackgroundTasks
 from fastapi import FastAPI, status, UploadFile, File, Response, HTTPException
@@ -117,12 +118,11 @@ def worker_socket():
 if __name__ == "__main__":
     os.environ['FL_LO_STATE'] = 'READY'
     # First, start the daemon monitoring data changes
+    t = threading.Thread(target=worker_socket)
+    t.start()
     daemon = Thread(target=setup_check_data_changes, daemon=True, name='Data Modification Monitor')
     daemon.start()
     # Then the websocket client
-    #asyncio.run(websocket_client())
-    t = threading.Thread(target=worker_socket)
-    t.start()
     # Finally, the main server
     uvicorn.run("main:app", host=HOST, port=int(PORT))
 
