@@ -41,12 +41,19 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.inferenceapp.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: flinference-config-map-volume
+          configMap:
+            name: flinference-config-map
       containers:
         - name: inferenceapp
           securityContext:
             {{- toYaml .Values.inferenceapp.securityContext | nindent 12 }}
           image: "{{ .Values.inferenceapp.image.repository }}:{{ .Values.inferenceapp.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.inferenceapp.image.pullPolicy }}
+          volumeMounts:
+          - mountPath: /code/inference_application/configurations
+            name: flinference-config-map-volume
           ports:
             - containerPort: {{ .Values.inferenceapp.service.containerPort }}
               protocol: {{ .Values.inferenceapp.service.protocol }}

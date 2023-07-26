@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flinference-config-map
+data:
+  format.json: |
+    {
+        "data_types":{
+            "numerical":{
+                "size": [5,4],
+                "normalized": false
+            }   
+        }
+    }
+  model.json: |
+    {
+    "model_name": "fall-detection",
+    "model_version": "pilot-2-1",
+    "library": "tflite",
+    "input_format":{
+        "data_types":{
+            "numerical": {
+                "size": [1,5,4],
+                "normalized": true
+                }   
+            }
+        }
+    }
+  transformation_pipeline.json: |
+    [
+        {
+            "id": "fall-detection-p2-normalization",
+            "parameters": {}
+        },
+        {
+            "id": "basic-expand-dimensions",
+            "parameters": {
+                "axis": 0
+            }
+        }
+    ]
