@@ -10,11 +10,11 @@ async def websocket_client():
     address = ORCHESTRATOR_WS_ADDRESS
     #Connect to the websocket server on FL Orchestrator
     try:
-        async for websocket in websockets.connect(address, open_timeout=2, close_timeout=2):
+        async for websocket in websockets.connect(address):
+            log(INFO, f'Websocket port available on {websocket.local_address}')
             while True:
                 try:
                     # Check what is the value of the current status
-                    log(INFO, f'Websocket port available on {websocket.local_address}')
                     status = os.getenv('FL_LO_STATE')
                     # Turn it into a JSON and send
                     await asyncio.sleep(WS_TIMEOUT)
@@ -26,11 +26,10 @@ async def websocket_client():
                 except ConnectionRefusedError as e:
                     log(ERROR, f'Websocket connection refused - cannot connect to server websocket')
                 except websockets.ConnectionClosed:
-                    break
+                    continue
     except ConnectionRefusedError as e:
         log(ERROR, f'Websocket connection refused - cannot connect to server websocket')
     except websockets.exceptions.ConnectionClosedError as e:
         log(ERROR, f'Websocket connection closed improperly')
     except Exception as e:
         log(ERROR, e)
-    websocket_client()

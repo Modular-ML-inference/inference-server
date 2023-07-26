@@ -6,6 +6,7 @@ from threading import Thread
 
 import gridfs
 from application.ws_client import websocket_client
+from multiprocessing import Process
 import uvicorn
 
 from application.additional.machine_monitoring import check_storage, check_memory, check_gpu, check_packages, \
@@ -14,13 +15,15 @@ from config import PORT, HOST, DB_PORT, TOTAL_LOCAL_OPERATIONS, PREPROCESSED_FOL
 from fastapi import BackgroundTasks
 from fastapi import FastAPI, status, UploadFile, File, Response, HTTPException
 from pymongo import MongoClient
-
+import prometheus_client
 import src.local_clients
+import threading
 from application.config import DATABASE_NAME
 from datamodels.models import LOTrainingConfiguration, MLModel, MachineCapabilities
 
 app = FastAPI()
-
+metrics_app = prometheus_client.make_asgi_app()
+app.mount("/metrics", metrics_app)
 
 # Receive configuration for training job
 @app.post("/job/config/{training_id}")
@@ -106,6 +109,10 @@ def retrieve_current_format():
         format = json.load(f)
     return format
 
+def worker_socket():
+    second_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(second_loop)
+    second_loop.run_until_complete(websocket_client())
 
 if __name__ == "__main__":
     os.environ['FL_LO_STATE'] = 'READY'
@@ -113,6 +120,9 @@ if __name__ == "__main__":
     daemon = Thread(target=setup_check_data_changes, daemon=True, name='Data Modification Monitor')
     daemon.start()
     # Then the websocket client
-    asyncio.get_event_loop().run_until_complete(websocket_client())
+    #asyncio.run(websocket_client())
+    t = threading.Thread(target=worker_socket)
+    t.start()
     # Finally, the main server
     uvicorn.run("main:app", host=HOST, port=int(PORT))
+

@@ -30,6 +30,7 @@ services:
       - default
     ports:
       - "905${USER_INDEX}:9050"
+      - 9003:9000
       - 30080:80
     extra_hosts:
       - "host.docker.internal:host-gateway"

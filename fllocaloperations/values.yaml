@@ -31,7 +31,7 @@ inferenceapp:
     port: 9000
     targetPort: 9000
     containerPort: 9000
-
+    protocol: TCP
   # The specification of the resources is needed for the proper functioning 
   # of the Smart Orchestrator enabler (requests)
   # and of the Resource provisioning enabler (limits)
@@ -106,6 +106,14 @@ trainingapp:
     port: 30080
     targetPort: 80
     containerPort: 80
+
+  metrics:
+    type: NodePort
+    nodePort: ""
+    port: 9000
+    targetPort: 9000
+    containerPort: 9000
+    protocol: TCP
 
   # The specification of the resources is needed for the proper functioning 
   # of the Smart Orchestrator enabler (requests)
