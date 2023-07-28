@@ -174,7 +174,7 @@ class InferenceSetupLoader:
     config_path = os.path.join("inference_application", "configurations", "setup.json")
     module_path = os.path.join("inference_application", "local_cache", "protocompiled")
     service_path = os.path.join("inference_application", "local_cache", "services")    
-
+    inference_path = os.path.join("inference_application", "local_cache", "inferencers")
 
     def load_setup(self):
         '''Load the setup of the inferencer'''
@@ -218,7 +218,21 @@ class InferenceSetupLoader:
             service = dill.load(f)
         return service
         
-
+    
+    def load_inferencer(self, inferencer):
+        '''Load the selected inferencer'''
+        # First module
+        m_path = os.path.join(self.inference_path, f'{inferencer}.zip')
+        with zipfile.ZipFile(m_path, mode="r") as archive:
+            archive.printdir()
+        importer = zipimport.zipimporter(m_path)
+        importer.load_module(inferencer)
+        sys.path.insert(0, m_path)
+        # Then pickled object
+        o_path = os.path.join(self.inference_path, f'{inferencer}.pkl')
+        with open(o_path, 'rb') as f:
+            inferencer = dill.load(f)
+        return inferencer
 
 '''
 def reconstruct_shape(data, shape):

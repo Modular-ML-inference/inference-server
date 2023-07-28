@@ -3,7 +3,7 @@ from data_transformation.exceptions import TransformationPipelineConfigurationIn
 from data_transformation.pipeline import BaseTransformationPipeline
 from prometheus_client import start_http_server, Summary
 from inference_application.code.inferencers.tflite_inferencer import TFLiteInferencer
-from inference_application.code.utils import InferenceFormatLoader, InferenceModelLoader, InferenceTransformationLoader
+from inference_application.code.utils import InferenceFormatLoader, InferenceModelLoader, InferenceSetupLoader, InferenceTransformationLoader
 
 TFLITE_PREPARATION_TIME = Summary('tflite_inference_pipeline_preparation_seconds', 'Time needed to set up TFLite inferencer')
 
@@ -28,7 +28,11 @@ class InferenceManager:
         loader.load(model_conf["model_name"], model_conf["model_version"])
         load_path = loader.check_nested_path(loader.temp_dir)
         model_library = model_conf["library"]
-        inferencer = library_inferencers[model_library]()
+        #inferencer = library_inferencers[model_library]()
+        setup_loader = InferenceSetupLoader()
+        setup_conf = setup_loader.load_setup()
+        # Load inferencer
+        inferencer = setup_loader.load_inferencer(setup_conf["inference"]["inferencer"])()
         # If not here, check if any additional available in the mounted cache
         model = inferencer.load_model(load_path)
         loader.cleanup()

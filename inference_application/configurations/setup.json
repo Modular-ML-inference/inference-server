@@ -3,5 +3,8 @@
         "modules":["inference_application.code.protocompiled.basic_inference_pb2", "inference_application.code.protocompiled.basic_inference_pb2_grpc", "inference_application.code.services.basic_inference_svc"],
         "method":"basic-inf-method-protocompiled",
         "servicer": "basic-inf-svc"
+    },
+    "inference":{
+        "inferencer": "inference_application.code.inferencers.tflite_inferencer"
     }
 }
