@@ -4,14 +4,18 @@ import json
 from logging import INFO, log
 import os
 import shutil
+import pickle
+import sys
 from zipfile import ZipFile
+import zipfile
+import zipimport
 import requests
 import numpy as np
 from pickle import load
 import dill
 from data_transformation.exceptions import TransformationConfigurationInvalidException
 from data_transformation.loader import ModelLoader
-from inference_application.config import REPOSITORY_ADDRESS
+from inference_application.config import REPOSITORY_ADDRESS, if_env
 
 
 class InferenceModelLoader(ModelLoader):
@@ -19,8 +23,9 @@ class InferenceModelLoader(ModelLoader):
     temp_dir = "temp"
     config_path = os.path.join("inference_application", "configurations", "model.json")
     local_files = os.path.join("inference_application", "local_cache", "models")
+    rep_name = if_env('REPOSITORY_ADDRESS')
 
-    def __init__(self, rep_name = REPOSITORY_ADDRESS):
+    def __init__(self, rep_name = if_env('REPOSITORY_ADDRESS')):
         self.rep_name = rep_name
     
     def check_library(self, model_name, model_version):
@@ -86,11 +91,12 @@ class InferenceModelLoader(ModelLoader):
             os.remove(f'{self.temp_dir}.zip')
 
 class InferenceTransformationLoader:
-
+    temp_dir = "temp"
     config_path = os.path.join("inference_application", "configurations", "transformation_pipeline.json")
     local_files = os.path.join("inference_application", "local_cache", "transformations")
+    rep_name = if_env('REPOSITORY_ADDRESS')
 
-    def __init__(self, rep_name = REPOSITORY_ADDRESS):
+    def __init__(self, rep_name = if_env('REPOSITORY_ADDRESS')):
         self.rep_name = rep_name
 
     def load_transformation(self, id):
@@ -101,7 +107,16 @@ class InferenceTransformationLoader:
                     transformation = dill.load(f)
                     return transformation()
             else:
-                raise TransformationConfigurationInvalidException(id)
+                try:
+                    with requests.get(f"{self.rep_name}/transformation"
+                                f"/{id}",stream=True) as r:
+                        with open(trans_path, 'wb') as f:
+                            shutil.copyfileobj(r.raw, f)
+                    with open(trans_path, 'rb') as f:
+                        transformation = dill.load(f)
+                    return transformation()
+                except BaseException as e:
+                    raise TransformationConfigurationInvalidException(id)
         except BaseException as e:
             raise TransformationConfigurationInvalidException(id)
         
@@ -153,3 +168,73 @@ def deconstruct_shape(inference):
     shape = list(inference_array.shape)
     inference = inference_array.flatten()
     return inference, shape
+
+class InferenceSetupLoader:
+
+    config_path = os.path.join("inference_application", "configurations", "setup.json")
+    module_path = os.path.join("inference_application", "local_cache", "protocompiled")
+    service_path = os.path.join("inference_application", "local_cache", "services")    
+
+
+    def load_setup(self):
+        '''Load the setup of the inferencer'''
+        if os.path.isfile(self.config_path):
+            with open(self.config_path, 'rb') as f:
+                setup_data = json.load(f)
+                return setup_data
+            
+    def load_modules(self, module_list):
+        """
+        We have to first load modules from the pkg files defined in the modules section of the service config in setup.
+        Those files should be placed in local_cache in the protocompiled folder.
+        Module packages should be named after the modules to load. 
+        """
+        for module in module_list:
+            m_path = os.path.join(self.module_path, f'{module}.zip')
+            with zipfile.ZipFile(m_path, mode="r") as archive:
+                archive.printdir()
+                z = archive.infolist()
+            importer = zipimport.zipimporter(m_path)
+            importer.load_module(module)
+            sys.path.insert(0, m_path)
+    
+    def load_method(self, method_name):
+        """
+        We have to then load method from the pkl file defined in the method section of the service config in setup.
+        This file should be placed in local_cache in the protocompiled folder.
+        """
+        method_path = os.path.join(self.module_path, f'{method_name}.pkl')
+        with open(method_path, 'rb') as f:
+            method = dill.load(f)
+        return method
+
+    def load_servicer(self, servicer_name):
+        """
+        Finally, we have to load service from the pkl file defined in the servicer section of the service config in setup.
+        This file should be placed in local_cache in the services folder.
+        """
+        svc_path = os.path.join(self.service_path, f'{servicer_name}.pkl')
+        with open(svc_path, 'rb') as f:
+            service = dill.load(f)
+        return service
+        
+
+
+'''
+def reconstruct_shape(data, shape):
+    """
+    A method that reconstructs the original array sent through grpc by properly employing shape
+    """
+    data = np.array(data).reshape(tuple(shape))
+    return data
+
+def deconstruct_shape(inference):
+    """
+    In order to send the data in a format compliant with grpc, we have to flattten the array to a list
+    and store separately information about the shape.
+    """
+    inference_array = np.array(inference)
+    shape = list(inference_array.shape)
+    inference = inference_array.flatten()
+    return inference, shape
+'''

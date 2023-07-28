@@ -59,8 +59,6 @@ spec:
               protocol: {{ .Values.inferenceapp.service.protocol }}
           resources:
             {{- toYaml .Values.inferenceapp.resources | nindent 12 }}
-          {{- with .Values.inferenceapp.envVars }}
-          env:
-            - name: EXAMPLE_ENV_VAR
-              value: {{ .exampleEnvVar | quote }}
-          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: fllocalops-configmap

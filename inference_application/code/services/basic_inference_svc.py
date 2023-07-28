@@ -1,4 +1,4 @@
-from inference_application.code.protocompiled import basic_inference_pb2, basic_inference_pb2_grpc
+from ..protocompiled import basic_inference_pb2, basic_inference_pb2_grpc
 import uuid
 from datetime import datetime
 from prometheus_client import Counter

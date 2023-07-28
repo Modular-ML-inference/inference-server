@@ -2,8 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import inference_application.code.protocompiled.basic_inference_pb2 as basic__inference__pb2
-
+from .basic_inference_pb2 import *
 
 class BasicInferenceServiceStub(object):
     """Missing associated documentation comment in .proto file."""
@@ -16,8 +15,8 @@ class BasicInferenceServiceStub(object):
         """
         self.predict = channel.stream_stream(
                 '/basic_inference.BasicInferenceService/predict',
-                request_serializer=basic__inference__pb2.BasicInferenceRequest.SerializeToString,
-                response_deserializer=basic__inference__pb2.BasicInferenceResponse.FromString,
+                request_serializer=BasicInferenceRequest.SerializeToString,
+                response_deserializer=BasicInferenceResponse.FromString,
                 )
 
 
@@ -35,8 +34,8 @@ def add_BasicInferenceServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'predict': grpc.stream_stream_rpc_method_handler(
                     servicer.predict,
-                    request_deserializer=basic__inference__pb2.BasicInferenceRequest.FromString,
-                    response_serializer=basic__inference__pb2.BasicInferenceResponse.SerializeToString,
+                    request_deserializer=BasicInferenceRequest.FromString,
+                    response_serializer=BasicInferenceResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -60,7 +59,7 @@ class BasicInferenceService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.stream_stream(request_iterator, target, '/basic_inference.BasicInferenceService/predict',
-            basic__inference__pb2.BasicInferenceRequest.SerializeToString,
-            basic__inference__pb2.BasicInferenceResponse.FromString,
+            BasicInferenceRequest.SerializeToString,
+            BasicInferenceResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

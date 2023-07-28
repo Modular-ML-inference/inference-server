@@ -174,3 +174,7 @@ Conversely, a sample config for twotronics is:
 
 It is also possible to deploy only the inference service without the need for any additional dependencies. 
 In order to do so, please run `helm install fllocaloperationslocal fllocaloperations --set inferenceapp.fullDeployment.enabled=false`.
+
+# Prometheus metrics
+
+The Prometheus metrics are available for scraping on the the port `9050` under url `/metrics` on the trainingapp, and on the port `9000` without any additional url path changes in the inferenceapp.

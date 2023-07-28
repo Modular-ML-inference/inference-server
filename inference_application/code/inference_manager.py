@@ -29,6 +29,7 @@ class InferenceManager:
         load_path = loader.check_nested_path(loader.temp_dir)
         model_library = model_conf["library"]
         inferencer = library_inferencers[model_library]()
+        # If not here, check if any additional available in the mounted cache
         model = inferencer.load_model(load_path)
         loader.cleanup()
         model_data_format = model_conf["input_format"]

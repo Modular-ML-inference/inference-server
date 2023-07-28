@@ -39,3 +39,7 @@ data:
             }
         }
     ]
+  setup.json: |
+    {
+    "service": "basic-inf-svc"
+    }

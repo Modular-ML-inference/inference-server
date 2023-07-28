@@ -66,8 +66,6 @@ inferenceapp:
 
   # Include here the environment variables to be used in the component's manifest (container section).
   # Here and in the manifest is included an example.
-  envVars:
-    exampleEnvVar: exampleValue
 
 
   imagePullSecrets: []
