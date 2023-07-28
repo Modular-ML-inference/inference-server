@@ -14,7 +14,7 @@ services:
       - DATA_PIPELINE_FILE=transformation_pipeline.json
       - DATA_FOLDER=/data
       - PREPROCESSED_FOLDER=/preprocessed
-      - REPOSITORY_ADDRESS=http://flrepository:9012
+      - REPOSITORY_ADDRESS=http://flrepository:9012 #http://flrepository:9012
       - ORCHESTRATOR_SVR_ADDRESS=http://fl-orchestrator-app:5000
       - ORCHESTRATOR_WS_ADDRESS=ws://host.docker.internal:8765
       - WS_TIMEOUT=5
