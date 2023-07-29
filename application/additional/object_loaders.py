@@ -85,7 +85,7 @@ class TrainingFormatLoader:
 class TrainingSetupLoader:
     config_path = os.path.join("application", "configurations", "setup.json")
     loader_path = os.path.join("application", "local_cache", "data_loaders")
-
+    client_path = os.path.join('application', 'local_cache', 'clients')
     #module_path = os.path.join("application", "local_cache", "protocompiled")
     #service_path = os.path.join("application", "local_cache", "services")    
     #inference_path = os.path.join("inference_application", "local_cache", "inferencers")
@@ -111,6 +111,22 @@ class TrainingSetupLoader:
             with open(trans_path, 'rb') as f:
                 loader = dill.load(f)
                 return loader
+            
+    def load_client(self, client_id):
+        '''Load a given client'''
+        trans_path = os.path.join(self.client_path, f'{client_id}.pkl')
+        if os.path.isfile(trans_path):
+            m_path = os.path.join(self.client_path, f'{client_id}.zip')
+            with zipfile.ZipFile(m_path, mode="r") as archive:
+                archive.printdir()
+                z = archive.infolist()
+            importer = zipimport.zipimporter(m_path)
+            importer.load_module(client_id)
+            sys.path.insert(0, m_path)
+            with open(trans_path, 'rb') as f:
+                client = dill.load(f)
+                return client
+
     '''
     def load_modules(self, module_list):
         """

@@ -35,14 +35,19 @@ class KerasBuilder(FlowerClientTrainingBuilder, FlowerClientInferenceBuilder):
 
     def __init__(self, id, configuration):
         self.configuration = configuration
+        self.library = "keras"
         self.id = id
 
     def prepare_training(self):
+        # Load the right data loader
         setup_loader = TrainingSetupLoader()
         setup = setup_loader.load_setup()
         loader_id = setup["data_loader"]
-        data_loader = setup_loader.load_data_loader(loader_id)
-        self.client = KerasClient(self.id, self.configuration, data_loader())
+        data_loader = setup_loader.load_data_loader(loader_id)()
+        # Load the right client
+        client_id = setup["client_library"][self.library]["id"]
+        self.client = setup_loader.load_client(client_id)(self.id, self.configuration, data_loader)
+        #self.client = KerasClient(self.id, self.configuration, data_loader)
         self.client.optimizer = self.add_optimizer()
         self.client.lr_scheduler = self.add_scheduler()
         self.client.model = self.add_model()
@@ -100,7 +105,7 @@ class KerasBuilder(FlowerClientTrainingBuilder, FlowerClientInferenceBuilder):
             raise BadConfigurationError("scheduler/callback")
         log(INFO, "Scheduler/callback added")
         return lr_scheduler
-
+'''
 class KerasClient(fl.client.NumPyClient):
 
     def __init__(self, training_id, config, data_loader):
@@ -146,3 +151,4 @@ class MyCustomCallback(keras.callbacks.Callback):
             return query
         except requests.exceptions.ConnectionError as e:
             log(INFO, f'Could not connect to orchestrator on {ORCHESTRATOR_SVR_ADDRESS}')
+'''
