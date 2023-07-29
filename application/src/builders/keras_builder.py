@@ -7,6 +7,7 @@ import tensorflow as tf
 import os
 
 from application.additional.exceptions import BadConfigurationError, ModelNotLoadedProperlyError
+from application.additional.object_loaders import TrainingSetupLoader
 from application.additional.utils import BasicModelLoader
 from application.config import ORCHESTRATOR_SVR_ADDRESS
 from application.src.clientbuilder import FlowerClientInferenceBuilder, FlowerClientTrainingBuilder
@@ -37,7 +38,11 @@ class KerasBuilder(FlowerClientTrainingBuilder, FlowerClientInferenceBuilder):
         self.id = id
 
     def prepare_training(self):
-        self.client = KerasClient(self.id, self.configuration)
+        setup_loader = TrainingSetupLoader()
+        setup = setup_loader.load_setup()
+        loader_id = setup["data_loader"]
+        data_loader = setup_loader.load_data_loader(loader_id)
+        self.client = KerasClient(self.id, self.configuration, data_loader())
         self.client.optimizer = self.add_optimizer()
         self.client.lr_scheduler = self.add_scheduler()
         self.client.model = self.add_model()
@@ -98,11 +103,11 @@ class KerasBuilder(FlowerClientTrainingBuilder, FlowerClientInferenceBuilder):
 
 class KerasClient(fl.client.NumPyClient):
 
-    def __init__(self, training_id, config):
+    def __init__(self, training_id, config, data_loader):
         self.priv_config = config
         self.round = 1
         self.training_id = training_id
-        self.data_loader = BuiltInDataLoader()
+        self.data_loader = data_loader
         (self.x_train, self.y_train) = self.data_loader.load_train()
         (self.x_test, self.y_test) = self.data_loader.load_test()
 

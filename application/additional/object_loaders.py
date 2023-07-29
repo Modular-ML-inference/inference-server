@@ -82,67 +82,68 @@ class TrainingFormatLoader:
             json.dump(format, self.config_path)
 
 
-# class InferenceSetupLoader:
+class TrainingSetupLoader:
+    config_path = os.path.join("application", "configurations", "setup.json")
+    loader_path = os.path.join("application", "local_cache", "data_loaders")
 
-#     config_path = os.path.join("application", "configurations", "setup.json")
-#     module_path = os.path.join("application", "local_cache", "protocompiled")
-#     service_path = os.path.join("application", "local_cache", "services")    
-#     inference_path = os.path.join("inference_application", "local_cache", "inferencers")
+    #module_path = os.path.join("application", "local_cache", "protocompiled")
+    #service_path = os.path.join("application", "local_cache", "services")    
+    #inference_path = os.path.join("inference_application", "local_cache", "inferencers")
 
-#     def load_setup(self):
-#         '''Load the setup of the inferencer'''
-#         if os.path.isfile(self.config_path):
-#             with open(self.config_path, 'rb') as f:
-#                 setup_data = json.load(f)
-#                 return setup_data
+    def load_setup(self):
+        '''Load the setup of the inferencer'''
+        if os.path.isfile(self.config_path):
+            with open(self.config_path, 'rb') as f:
+                setup_data = json.load(f)
+                return setup_data
             
-#     def load_modules(self, module_list):
-#         """
-#         We have to first load modules from the pkg files defined in the modules section of the service config in setup.
-#         Those files should be placed in local_cache in the protocompiled folder.
-#         Module packages should be named after the modules to load. 
-#         """
-#         for module in module_list:
-#             m_path = os.path.join(self.module_path, f'{module}.zip')
-#             with zipfile.ZipFile(m_path, mode="r") as archive:
-#                 archive.printdir()
-#                 z = archive.infolist()
-#             importer = zipimport.zipimporter(m_path)
-#             importer.load_module(module)
-#             sys.path.insert(0, m_path)
+    def load_data_loader(self, loader_id):
+        '''Load a given data loader'''
+        trans_path = os.path.join(self.loader_path, f'{loader_id}.pkl')
+        if os.path.isfile(trans_path):
+            m_path = os.path.join(self.loader_path, f'{loader_id}.zip')
+            with zipfile.ZipFile(m_path, mode="r") as archive:
+                archive.printdir()
+                z = archive.infolist()
+            importer = zipimport.zipimporter(m_path)
+            importer.load_module(loader_id)
+            sys.path.insert(0, m_path)
+            with open(trans_path, 'rb') as f:
+                loader = dill.load(f)
+                return loader
+    '''
+    def load_modules(self, module_list):
+        """
+        We have to first load modules from the pkg files defined in the modules section of the service config in setup.
+        Those files should be placed in local_cache in the protocompiled folder.
+        Module packages should be named after the modules to load. 
+        """
+        for module in module_list:
+            m_path = os.path.join(self.module_path, f'{module}.zip')
+            with zipfile.ZipFile(m_path, mode="r") as archive:
+                archive.printdir()
+                z = archive.infolist()
+            importer = zipimport.zipimporter(m_path)
+            importer.load_module(module)
+            sys.path.insert(0, m_path)
     
-#     def load_method(self, method_name):
-#         """
-#         We have to then load method from the pkl file defined in the method section of the service config in setup.
-#         This file should be placed in local_cache in the protocompiled folder.
-#         """
-#         method_path = os.path.join(self.module_path, f'{method_name}.pkl')
-#         with open(method_path, 'rb') as f:
-#             method = dill.load(f)
-#         return method
+    def load_method(self, method_name):
+        """
+        We have to then load method from the pkl file defined in the method section of the service config in setup.
+        This file should be placed in local_cache in the protocompiled folder.
+        """
+        method_path = os.path.join(self.module_path, f'{method_name}.pkl')
+        with open(method_path, 'rb') as f:
+            method = dill.load(f)
+        return method
 
-#     def load_servicer(self, servicer_name):
-#         """
-#         Finally, we have to load service from the pkl file defined in the servicer section of the service config in setup.
-#         This file should be placed in local_cache in the services folder.
-#         """
-#         svc_path = os.path.join(self.service_path, f'{servicer_name}.pkl')
-#         with open(svc_path, 'rb') as f:
-#             service = dill.load(f)
-#         return service
-        
-    
-#     def load_inferencer(self, inferencer):
-#         '''Load the selected inferencer'''
-#         # First module
-#         m_path = os.path.join(self.inference_path, f'{inferencer}.zip')
-#         with zipfile.ZipFile(m_path, mode="r") as archive:
-#             archive.printdir()
-#         importer = zipimport.zipimporter(m_path)
-#         importer.load_module(inferencer)
-#         sys.path.insert(0, m_path)
-#         # Then pickled object
-#         o_path = os.path.join(self.inference_path, f'{inferencer}.pkl')
-#         with open(o_path, 'rb') as f:
-#             inferencer = dill.load(f)
-#         return inferencer
+    def load_servicer(self, servicer_name):
+        """
+        Finally, we have to load service from the pkl file defined in the servicer section of the service config in setup.
+        This file should be placed in local_cache in the services folder.
+        """
+        svc_path = os.path.join(self.service_path, f'{servicer_name}.pkl')
+        with open(svc_path, 'rb') as f:
+            service = dill.load(f)
+        return service
+    '''
