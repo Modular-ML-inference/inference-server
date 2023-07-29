@@ -13,6 +13,21 @@ spec:
   volumeName: pvc-data-lo
   storageClassName: manual
 ---
+{{- if .Values.trainingapp.custom_setup }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: custom-code-claim
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: pvc-custom-lo
+{{- end }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -73,8 +88,22 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: data
+            {{- if .Values.trainingapp.custom_setup }}
+            - mountPath: /code/application/local_cache
+              name: custom
+            {{- end}}
+            - mountPath: /code/application/configurations
+              name: fltraining-config-map-volume
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: local-data-claim
+        {{- if .Values.trainingapp.custom_setup }}
+        - name: custom
+          persistentVolumeClaim:
+            claimName: custom-code-claim
+        {{- end}}
+        - name: fltraining-config-map-volume
+          configMap:
+            name: fltraining-config-map
 {{- end}}

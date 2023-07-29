@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fltraining-config-map
+data:
+  format.json: |
+    {
+    }
+  model.json: |
+    {
+    }
+  transformation_pipeline_train.json: |
+    [
+        {
+        "id": "application.tests.categorical_transformation",
+        "parameters": {
+            "categories":10
+        }
+        }
+    ]
+  transformation_pipeline_test.json: |
+    [
+        {
+            "id": "application.tests.categorical_transformation",
+            "parameters": {
+                "categories":10
+            }
+        }
+    ]
+  setup.json: |
+    {
+    "data_loader": "application.tests.new_loader",
+    "client_library": {
+            "keras":{
+                "id": "application.tests.new_keras_client"
+            },
+            "pytorch": {
+                "id": ""
+            }
+        }
+    }

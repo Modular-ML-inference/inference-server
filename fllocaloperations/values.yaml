@@ -1,3 +1,4 @@
+
 # Default values for enabler.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
@@ -11,6 +12,7 @@ enablerNodeSelector: {}
 # Component inferenceapp values
 inferenceapp:
   tier: internal
+  custom_setup: False
   image:
     repository: karola766/inferenceapp
     pullPolicy: Always
@@ -76,6 +78,7 @@ inferenceapp:
 # Component trainingapp values
 trainingapp:
   tier: external
+  custom_setup: False
   image:
     repository: karola766/trainingapp
     pullPolicy: Always

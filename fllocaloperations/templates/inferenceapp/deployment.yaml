@@ -1,3 +1,18 @@
+{{- if .Values.inferenceapp.custom_setup }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: custom-code-claim-inf
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: pvc-custom-inf
+{{- end }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -45,6 +60,11 @@ spec:
         - name: flinference-config-map-volume
           configMap:
             name: flinference-config-map
+        {{- if .Values.inferenceapp.custom_setup }}
+        - name: custom
+          persistentVolumeClaim:
+            claimName: custom-code-claim-inf
+        {{- end}}
       containers:
         - name: inferenceapp
           securityContext:
@@ -54,6 +74,10 @@ spec:
           volumeMounts:
           - mountPath: /code/inference_application/configurations
             name: flinference-config-map-volume
+          {{- if .Values.inferenceapp.custom_setup }}
+          - mountPath: /code/inference_application/local_cache
+            name: custom
+          {{- end}}
           ports:
             - containerPort: {{ .Values.inferenceapp.service.containerPort }}
               protocol: {{ .Values.inferenceapp.service.protocol }}
