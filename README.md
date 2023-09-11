@@ -178,3 +178,7 @@ In order to do so, please run `helm install fllocaloperationslocal fllocaloperat
 # Prometheus metrics
 
 The Prometheus metrics are available for scraping on the the port `9050` under url `/metrics` on the trainingapp, and on the port `9000` without any additional url path changes in the inferenceapp.
+
+# How to construct the pluggable modules 
+
+More detailed information on how to construct pluggable modules (and which pluggable modules can be constructed) can be found in the `pluggable_module_instructions_fl_lo.ipynb` file.

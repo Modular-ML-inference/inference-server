@@ -1,0 +1,20 @@
+{{- if .Values.inferenceapp.custom_setup }}
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pvc-custom-inf-{{ include "inferenceapp.fullname" . }}
+  labels:
+    type: local
+spec:
+  storageClassName: standard
+  capacity:
+    storage: 1Gi
+  persistentVolumeReclaimPolicy: Retain
+  accessModes:
+    - ReadWriteOnce
+  claimRef:
+    name: custom-code-claim-inf-{{ include "inferenceapp.fullname" . }}
+    namespace: default
+  hostPath:
+    path: "/local-operations/inf-cache"
+{{- end}}

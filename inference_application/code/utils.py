@@ -103,6 +103,13 @@ class InferenceTransformationLoader:
         trans_path = os.path.join(self.local_files, f'{id}.pkl')
         try:
             if os.path.isfile(trans_path):
+                m_path = os.path.join(self.local_files, f'{id}.zip')
+                with zipfile.ZipFile(m_path, mode="r") as archive:
+                    archive.printdir()
+                    z = archive.infolist()
+                importer = zipimport.zipimporter(m_path)
+                importer.load_module(id)
+                sys.path.insert(0, m_path)
                 with open(trans_path, 'rb') as f:
                     transformation = dill.load(f)
                     return transformation()

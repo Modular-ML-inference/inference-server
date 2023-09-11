@@ -2,7 +2,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: custom-code-claim-inf
+  name: custom-code-claim-inf-{{ include "inferenceapp.fullname" . }}
   namespace: {{ .Release.Namespace | quote }}
 spec:
   accessModes:
@@ -10,7 +10,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  volumeName: pvc-custom-inf
+  volumeName: pvc-custom-inf-{{ include "inferenceapp.fullname" . }}
 {{- end }}
 ---
 apiVersion: apps/v1
@@ -63,7 +63,7 @@ spec:
         {{- if .Values.inferenceapp.custom_setup }}
         - name: custom
           persistentVolumeClaim:
-            claimName: custom-code-claim-inf
+            claimName: custom-code-claim-inf-{{ include "inferenceapp.fullname" . }}
         {{- end}}
       containers:
         - name: inferenceapp

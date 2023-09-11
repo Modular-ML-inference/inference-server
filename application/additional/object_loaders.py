@@ -1,4 +1,5 @@
 import json
+from logging import INFO, log
 import os
 import sys
 import zipfile
@@ -7,6 +8,7 @@ import dill
 import requests
 import shutil
 from application.config import REPOSITORY_ADDRESS
+import data_transformation
 from data_transformation.exceptions import TransformationConfigurationInvalidException
 
 
@@ -31,6 +33,7 @@ class TrainingTransformationLoader:
                 importer = zipimport.zipimporter(m_path)
                 importer.load_module(id)
                 sys.path.insert(0, m_path)
+                log(INFO, dir(data_transformation))
                 with open(trans_path, 'rb') as f:
                     transformation = dill.load(f)
                     return transformation()
