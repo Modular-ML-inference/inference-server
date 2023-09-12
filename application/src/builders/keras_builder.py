@@ -7,6 +7,7 @@ import tensorflow as tf
 import os
 
 from application.additional.exceptions import BadConfigurationError, ModelNotLoadedProperlyError
+from application.additional.object_loaders import TrainingSetupLoader
 from application.additional.utils import BasicModelLoader
 from application.config import ORCHESTRATOR_SVR_ADDRESS
 from application.src.clientbuilder import FlowerClientInferenceBuilder, FlowerClientTrainingBuilder
@@ -34,10 +35,19 @@ class KerasBuilder(FlowerClientTrainingBuilder, FlowerClientInferenceBuilder):
 
     def __init__(self, id, configuration):
         self.configuration = configuration
+        self.library = "keras"
         self.id = id
 
     def prepare_training(self):
-        self.client = KerasClient(self.id, self.configuration)
+        # Load the right data loader
+        setup_loader = TrainingSetupLoader()
+        setup = setup_loader.load_setup()
+        loader_id = setup["data_loader"]
+        data_loader = setup_loader.load_data_loader(loader_id)()
+        # Load the right client
+        client_id = setup["client_library"][self.library]["id"]
+        self.client = setup_loader.load_client(client_id)(self.id, self.configuration, data_loader)
+        #self.client = KerasClient(self.id, self.configuration, data_loader)
         self.client.optimizer = self.add_optimizer()
         self.client.lr_scheduler = self.add_scheduler()
         self.client.model = self.add_model()
@@ -95,14 +105,14 @@ class KerasBuilder(FlowerClientTrainingBuilder, FlowerClientInferenceBuilder):
             raise BadConfigurationError("scheduler/callback")
         log(INFO, "Scheduler/callback added")
         return lr_scheduler
-
+'''
 class KerasClient(fl.client.NumPyClient):
 
-    def __init__(self, training_id, config):
+    def __init__(self, training_id, config, data_loader):
         self.priv_config = config
         self.round = 1
         self.training_id = training_id
-        self.data_loader = BuiltInDataLoader()
+        self.data_loader = data_loader
         (self.x_train, self.y_train) = self.data_loader.load_train()
         (self.x_test, self.y_test) = self.data_loader.load_test()
 
@@ -141,3 +151,4 @@ class MyCustomCallback(keras.callbacks.Callback):
             return query
         except requests.exceptions.ConnectionError as e:
             log(INFO, f'Could not connect to orchestrator on {ORCHESTRATOR_SVR_ADDRESS}')
+'''

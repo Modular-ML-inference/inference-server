@@ -1,3 +1,18 @@
+{{- if .Values.inferenceapp.custom_setup }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: custom-code-claim-inf-{{ include "inferenceapp.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: pvc-custom-inf-{{ include "inferenceapp.fullname" . }}
+{{- end }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -41,19 +56,33 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.inferenceapp.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: flinference-config-map-volume
+          configMap:
+            name: flinference-config-map
+        {{- if .Values.inferenceapp.custom_setup }}
+        - name: custom
+          persistentVolumeClaim:
+            claimName: custom-code-claim-inf-{{ include "inferenceapp.fullname" . }}
+        {{- end}}
       containers:
         - name: inferenceapp
           securityContext:
             {{- toYaml .Values.inferenceapp.securityContext | nindent 12 }}
           image: "{{ .Values.inferenceapp.image.repository }}:{{ .Values.inferenceapp.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.inferenceapp.image.pullPolicy }}
+          volumeMounts:
+          - mountPath: /code/inference_application/configurations
+            name: flinference-config-map-volume
+          {{- if .Values.inferenceapp.custom_setup }}
+          - mountPath: /code/inference_application/local_cache
+            name: custom
+          {{- end}}
           ports:
             - containerPort: {{ .Values.inferenceapp.service.containerPort }}
               protocol: {{ .Values.inferenceapp.service.protocol }}
           resources:
             {{- toYaml .Values.inferenceapp.resources | nindent 12 }}
-          {{- with .Values.inferenceapp.envVars }}
-          env:
-            - name: EXAMPLE_ENV_VAR
-              value: {{ .exampleEnvVar | quote }}
-          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: fllocalops-configmap

@@ -1,7 +1,7 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: pvc-data-lo
+  name: pvc-data-lo-{{ include "trainingapp.fullname" . }}
   labels:
     type: local
 spec:
@@ -12,7 +12,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   claimRef:
-    name: local-data-claim
+    name: local-data-claim-{{ include "trainingapp.fullname" . }}
     namespace: default
   hostPath:
     path: "/local-operations/data"

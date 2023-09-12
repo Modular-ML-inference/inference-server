@@ -2,7 +2,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: local-data-claim
+  name: local-data-claim-{{ include "trainingapp.fullname" . }}
   namespace: {{ .Release.Namespace | quote }}
 spec:
   accessModes:
@@ -10,8 +10,23 @@ spec:
   resources:
     requests:
       storage: 5Gi
-  volumeName: pvc-data-lo
+  volumeName: pvc-data-lo-{{ include "trainingapp.fullname" . }}
   storageClassName: manual
+---
+{{- if .Values.trainingapp.custom_setup }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: custom-code-claim-{{ include "trainingapp.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: pvc-custom-lo-{{ include "trainingapp.fullname" . }}
+{{- end }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -73,8 +88,22 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: data
+            {{- if .Values.trainingapp.custom_setup }}
+            - mountPath: /code/application/local_cache
+              name: custom
+            {{- end}}
+            - mountPath: /code/application/configurations
+              name: fltraining-config-map-volume
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: local-data-claim
+            claimName: local-data-claim-{{ include "trainingapp.fullname" . }}
+        {{- if .Values.trainingapp.custom_setup }}
+        - name: custom
+          persistentVolumeClaim:
+            claimName: custom-code-claim-{{ include "trainingapp.fullname" . }}
+        {{- end}}
+        - name: fltraining-config-map-volume
+          configMap:
+            name: fltraining-config-map
 {{- end}}

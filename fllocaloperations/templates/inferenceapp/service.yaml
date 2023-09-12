@@ -8,11 +8,19 @@ metadata:
 spec:
   type: {{ .Values.inferenceapp.service.type }}
   ports:
-    - port: {{ .Values.inferenceapp.service.port }}
+    - name: main
+      port: {{ .Values.inferenceapp.service.port }}
       targetPort: {{ .Values.inferenceapp.service.targetPort }}
       protocol: {{ .Values.inferenceapp.service.protocol }}
       {{- if and (or (eq .Values.inferenceapp.service.type "NodePort") (eq .Values.inferenceapp.service.type "LoadBalancer")) (not (empty .Values.inferenceapp.service.nodePort)) }}
       nodePort: {{ .Values.inferenceapp.service.nodePort }}
+      {{ end }}
+    - name: metrics
+      port: {{ .Values.inferenceapp.metrics.port }}
+      targetPort: {{ .Values.inferenceapp.metrics.targetPort }}
+      protocol: {{ .Values.inferenceapp.metrics.protocol }}
+      {{- if and (or (eq .Values.inferenceapp.metrics.type "NodePort") (eq .Values.inferenceapp.metrics.type "LoadBalancer")) (not (empty .Values.inferenceapp.metrics.nodePort)) }}
+      nodePort: {{ .Values.inferenceapp.metrics.nodePort }}
       {{ end }}
   selector:
     {{- include "inferenceapp.selectorLabels" . | nindent 4 }}

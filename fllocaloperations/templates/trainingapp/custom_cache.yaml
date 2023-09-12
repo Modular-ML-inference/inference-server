@@ -1,0 +1,20 @@
+{{- if .Values.trainingapp.custom_setup }}
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pvc-custom-lo-{{ include "trainingapp.fullname" . }}
+  labels:
+    type: local
+spec:
+  storageClassName: standard
+  capacity:
+    storage: 1Gi
+  persistentVolumeReclaimPolicy: Retain
+  accessModes:
+    - ReadWriteOnce
+  claimRef:
+    name: custom-code-claim-{{ include "trainingapp.fullname" . }}
+    namespace: default
+  hostPath:
+    path: "/local-operations/cache"
+{{- end }}

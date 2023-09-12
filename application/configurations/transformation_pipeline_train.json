@@ -1,0 +1,8 @@
+[
+    {
+        "id": "application.tests.categorical_transformation",
+        "parameters": {
+            "categories":10
+        }
+    }
+]

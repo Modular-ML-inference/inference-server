@@ -1,17 +1,19 @@
 # import required libraries & proto defn.
 import grpc
 from concurrent import futures
-import inference_application.code.protocompiled.basic_inference_pb2_grpc as basic_inf
+import prometheus_client
 
-# import servicer
-from inference_application.code.services.basic_inference_svc import BasicInferenceService
+from inference_application.code.service_manager import ServiceManager
 
 def serve():
+    # initialize prometheus server
+    prometheus_client.start_http_server(9000)
+
     # initialize server with 4 workers
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=4))
-
-    # attach servicer method to the server
-    basic_inf.add_BasicInferenceServiceServicer_to_server(BasicInferenceService(), server)
+    
+    # The setup of the service is flexible and can be seen more thoroughly in classes ServiceManager and InferenceSetupLoader
+    ServiceManager().setup_service(server)
 
     # start the server on the port 50051
     server.add_insecure_port("0.0.0.0:50051")

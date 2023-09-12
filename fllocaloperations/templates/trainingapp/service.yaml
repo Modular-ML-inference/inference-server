@@ -23,6 +23,13 @@ spec:
       {{- if and (or (eq .Values.trainingapp.ws.type "NodePort") (eq .Values.trainingapp.ws.type "LoadBalancer")) (not (empty .Values.trainingapp.ws.nodePort)) }}
       nodePort: {{ .Values.trainingapp.ws.nodePort }}
       {{ end }}
+    - name: metrics
+      port: {{ .Values.trainingapp.metrics.port }}
+      targetPort: {{ .Values.trainingapp.metrics.targetPort }}
+      protocol: {{ .Values.trainingapp.metrics.protocol }}
+      {{- if and (or (eq .Values.trainingapp.metrics.type "NodePort") (eq .Values.trainingapp.metrics.type "LoadBalancer")) (not (empty .Values.trainingapp.metrics.nodePort)) }}
+      nodePort: {{ .Values.trainingapp.metrics.nodePort }}
+      {{ end }}
   selector:
     {{- include "trainingapp.selectorLabels" . | nindent 4 }}
 {{- end}}

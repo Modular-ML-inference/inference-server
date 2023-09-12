@@ -1,12 +1,12 @@
 [
     {
-        "id": "fall-detection-p2-normalization",
+        "id": "inference_application.custom.basic_norm",
         "parameters": {
 
         }
     },
     {
-        "id": "basic-expand-dimensions",
+        "id": "inference_application.custom.expansion",
         "parameters": {
             "axis": 0
 

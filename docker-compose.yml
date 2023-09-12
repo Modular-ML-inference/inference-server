@@ -14,7 +14,7 @@ services:
       - DATA_PIPELINE_FILE=transformation_pipeline.json
       - DATA_FOLDER=/data
       - PREPROCESSED_FOLDER=/preprocessed
-      - REPOSITORY_ADDRESS=http://flrepository:9012
+      - REPOSITORY_ADDRESS=http://flrepository:9012 #http://flrepository:9012
       - ORCHESTRATOR_SVR_ADDRESS=http://fl-orchestrator-app:5000
       - ORCHESTRATOR_WS_ADDRESS=ws://host.docker.internal:8765
       - WS_TIMEOUT=5
@@ -30,6 +30,7 @@ services:
       - default
     ports:
       - "905${USER_INDEX}:9050"
+      - 9003:9000
       - 30080:80
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -65,6 +66,7 @@ services:
       - default
     ports:
       - "50052:50051"
+      - "9001:9000"
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

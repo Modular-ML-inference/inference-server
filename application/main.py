@@ -6,21 +6,25 @@ from threading import Thread
 
 import gridfs
 from application.ws_client import websocket_client
+from multiprocessing import Process
 import uvicorn
 
-from application.additional.machine_monitoring import check_storage, check_memory, check_gpu, check_packages, \
+from application.additional.machine_monitoring import check_packages, \
     check_models, setup_check_data_changes
+from application.additional.utils import check_storage, check_memory, check_gpu
 from config import PORT, HOST, DB_PORT, TOTAL_LOCAL_OPERATIONS, PREPROCESSED_FOLDER, DATA_FORMAT_FILE, DATA_FOLDER
 from fastapi import BackgroundTasks
 from fastapi import FastAPI, status, UploadFile, File, Response, HTTPException
 from pymongo import MongoClient
-
+import prometheus_client
 import src.local_clients
+import threading
 from application.config import DATABASE_NAME
 from datamodels.models import LOTrainingConfiguration, MLModel, MachineCapabilities
 
 app = FastAPI()
-
+metrics_app = prometheus_client.make_asgi_app()
+app.mount("/metrics", metrics_app)
 
 # Receive configuration for training job
 @app.post("/job/config/{training_id}")
@@ -99,20 +103,27 @@ def retrieve_current_format():
     """
     An endpoint that returns the current format of the data
     """
-    format_file = os.path.join(PREPROCESSED_FOLDER, DATA_FORMAT_FILE)
+    format_file = os.path.join("application", "configurations", "format.json")
+    #format_file = os.path.join(PREPROCESSED_FOLDER, DATA_FORMAT_FILE)
     if not os.path.exists(format_file):
         format_file = os.path.join(DATA_FOLDER, DATA_FORMAT_FILE)
     with open(format_file) as f:
         format = json.load(f)
     return format
 
+def worker_socket():
+    second_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(second_loop)
+    second_loop.run_until_complete(websocket_client())
 
 if __name__ == "__main__":
     os.environ['FL_LO_STATE'] = 'READY'
     # First, start the daemon monitoring data changes
+    t = threading.Thread(target=worker_socket)
+    t.start()
     daemon = Thread(target=setup_check_data_changes, daemon=True, name='Data Modification Monitor')
     daemon.start()
     # Then the websocket client
-    asyncio.get_event_loop().run_until_complete(websocket_client())
     # Finally, the main server
     uvicorn.run("main:app", host=HOST, port=int(PORT))
+

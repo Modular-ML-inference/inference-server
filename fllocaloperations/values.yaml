@@ -1,3 +1,4 @@
+
 # Default values for enabler.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
@@ -11,8 +12,9 @@ enablerNodeSelector: {}
 # Component inferenceapp values
 inferenceapp:
   tier: internal
+  custom_setup: False
   image:
-    repository: karola766/inferenceapp
+    repository: gitlab.assist-iot.eu:5050/enablers-registry/public/lo/inferenceapp
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
@@ -25,7 +27,13 @@ inferenceapp:
     targetPort: 50051
     containerPort: 50051
     protocol: TCP
-
+  metrics:
+    type: NodePort
+    nodePort: ""
+    port: 9000
+    targetPort: 9000
+    containerPort: 9000
+    protocol: TCP
   # The specification of the resources is needed for the proper functioning 
   # of the Smart Orchestrator enabler (requests)
   # and of the Resource provisioning enabler (limits)
@@ -60,8 +68,6 @@ inferenceapp:
 
   # Include here the environment variables to be used in the component's manifest (container section).
   # Here and in the manifest is included an example.
-  envVars:
-    exampleEnvVar: exampleValue
 
 
   imagePullSecrets: []
@@ -72,8 +78,9 @@ inferenceapp:
 # Component trainingapp values
 trainingapp:
   tier: external
+  custom_setup: False
   image:
-    repository: karola766/trainingapp
+    repository: gitlab.assist-iot.eu:5050/enablers-registry/public/lo/trainingapp
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
@@ -100,6 +107,14 @@ trainingapp:
     port: 30080
     targetPort: 80
     containerPort: 80
+
+  metrics:
+    type: NodePort
+    nodePort: ""
+    port: 9000
+    targetPort: 9000
+    containerPort: 9000
+    protocol: TCP
 
   # The specification of the resources is needed for the proper functioning 
   # of the Smart Orchestrator enabler (requests)
@@ -150,7 +165,7 @@ trainingapp:
 db:
   tier: internal
   image:
-    repository: karola766/localdb
+    repository: gitlab.assist-iot.eu:5050/enablers-registry/public/lo/localdb
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"

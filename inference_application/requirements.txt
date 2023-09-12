@@ -3,6 +3,7 @@ grpcio==1.53.0
 numpy==1.23.5
 protobuf==4.22.3
 pydantic==1.10.7
+prometheus-client==0.17.1
 pymongo==4.3.3
 requests==2.28.2
 tensorflow-cpu==2.12.0 ; platform_machine == 'x86_64' or platform_machine == 'amd64'
