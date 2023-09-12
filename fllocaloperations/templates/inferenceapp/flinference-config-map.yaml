@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: flinference-config-map
+  name: flinference-config-map-{{ include "inferenceapp.fullname" . }}
 data:
   format.json: |
     {

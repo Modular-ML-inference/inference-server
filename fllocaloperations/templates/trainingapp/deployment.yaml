@@ -84,7 +84,7 @@ spec:
             {{- toYaml .Values.trainingapp.resources | nindent 12 }}
           envFrom:
             - configMapRef:
-                name: fllocalops-configmap
+                name: fllocalops-configmap-{{ include "inferenceapp.fullname" . }}
           volumeMounts:
             - mountPath: /data
               name: data
@@ -105,5 +105,5 @@ spec:
         {{- end}}
         - name: fltraining-config-map-volume
           configMap:
-            name: fltraining-config-map
+            name: fltraining-config-map-{{ include "trainingapp.fullname" . }}
 {{- end}}

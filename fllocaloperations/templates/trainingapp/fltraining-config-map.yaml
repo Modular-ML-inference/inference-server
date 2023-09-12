@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: fltraining-config-map
+  name: fltraining-config-map-{{ include "trainingapp.fullname" . }}
 data:
   format.json: |
     {

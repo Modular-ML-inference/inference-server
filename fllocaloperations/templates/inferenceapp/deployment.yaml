@@ -59,7 +59,7 @@ spec:
       volumes:
         - name: flinference-config-map-volume
           configMap:
-            name: flinference-config-map
+            name: flinference-config-map-{{ include "inferenceapp.fullname" . }}
         {{- if .Values.inferenceapp.custom_setup }}
         - name: custom
           persistentVolumeClaim:
@@ -85,4 +85,4 @@ spec:
             {{- toYaml .Values.inferenceapp.resources | nindent 12 }}
           envFrom:
             - configMapRef:
-                name: fllocalops-configmap
+                name: fllocalops-configmap-{{ include "inferenceapp.fullname" . }}

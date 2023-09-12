@@ -14,7 +14,7 @@ inferenceapp:
   tier: internal
   custom_setup: False
   image:
-    repository: gitlab.assist-iot.eu:5050/enablers-registry/public/lo/inferenceapp
+    repository: karola766/inferenceapp
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
@@ -80,7 +80,7 @@ trainingapp:
   tier: external
   custom_setup: False
   image:
-    repository: gitlab.assist-iot.eu:5050/enablers-registry/public/lo/trainingapp
+    repository: karola766/trainingapp
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
@@ -165,7 +165,7 @@ trainingapp:
 db:
   tier: internal
   image:
-    repository: gitlab.assist-iot.eu:5050/enablers-registry/public/lo/localdb
+    repository: karola766/localdb
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
