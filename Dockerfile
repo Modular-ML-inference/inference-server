@@ -9,4 +9,5 @@ ENV PYTHONPATH "${PYTHONPATH}:/code/inference_application"
 ENV PYTHONPATH "${PYTHONPATH}:/code/data_transformation"
 ENV PYTHONPATH "${PYTHONPATH}:/code/datamodels"
 
+
 CMD python3 inference_application/code/main.py
