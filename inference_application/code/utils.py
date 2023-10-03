@@ -101,31 +101,42 @@ class InferenceTransformationLoader:
 
     def load_transformation(self, id):
         trans_path = os.path.join(self.local_files, f'{id}.pkl')
+        ephem_path = f'{self.temp_dir}.zip'
         try:
-            if os.path.isfile(trans_path):
-                m_path = os.path.join(self.local_files, f'{id}.zip')
-                with zipfile.ZipFile(m_path, mode="r") as archive:
-                    archive.printdir()
-                    z = archive.infolist()
-                importer = zipimport.zipimporter(m_path)
-                importer.load_module(id)
-                sys.path.insert(0, m_path)
-                with open(trans_path, 'rb') as f:
-                    transformation = dill.load(f)
-                    return transformation()
-            else:
+            if not os.path.isfile(trans_path):
+                # if the right file is not here, try to download it
                 try:
                     with requests.get(f"{self.rep_name}/transformation"
                                 f"/{id}",stream=True) as r:
-                        with open(trans_path, 'wb') as f:
+                        with open(ephem_path, 'wb') as f:
                             shutil.copyfileobj(r.raw, f)
-                    with open(trans_path, 'rb') as f:
-                        transformation = dill.load(f)
-                    return transformation()
+                    # First we extract all the downloaded files to the cache dir
+                    with ZipFile(ephem_path, 'r') as zipObj:
+                        # Extract all the contents of zip file in current transformations directory
+                        zipObj.extractall(self.local_files)
+                    # now, since we have extracted everything to the transformations
+                    # we have to cleanup
+                    self.cleanup()
                 except BaseException as e:
                     raise TransformationConfigurationInvalidException(id)
+            m_path = os.path.join(self.local_files, f'{id}.zip')
+            with zipfile.ZipFile(m_path, mode="r") as archive:
+                archive.printdir()
+                z = archive.infolist()
+            importer = zipimport.zipimporter(m_path)
+            importer.load_module(id)
+            sys.path.insert(0, m_path)
+            with open(trans_path, 'rb') as f:
+                transformation = dill.load(f)
+                return transformation()
         except BaseException as e:
             raise TransformationConfigurationInvalidException(id)
+        
+    def cleanup(self):
+        if os.path.exists(self.temp_dir):
+            shutil.rmtree(f'{self.temp_dir}')
+        if os.path.exists(f'{self.temp_dir}.zip'):
+            os.remove(f'{self.temp_dir}.zip')
         
     def load_from_config(self):
         """
