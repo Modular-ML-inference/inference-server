@@ -4,7 +4,7 @@ from datamodels.models import MachineCapabilities
 import numpy as np
 import tensorflow
 from tensorflow.keras.utils import to_categorical
-'''
+
 class CategoricalTransformation(DataTransformation):
     """
     A class to represent the categorical transformation
@@ -34,6 +34,9 @@ class CategoricalTransformation(DataTransformation):
         return (x, y)
 
     def transform_format(self, format):
-        """Transform the data format according to the set description"""
+        if "numerical" in format["y"]["data_types"]:
+            categories = self.params["categories"]
+            format["y"]["data_types"]["categorical"] = format["y"]["data_types"]["numerical"]
+            del format["y"]["data_types"]["numerical"]
+            format["y"]["data_types"]["categorical"]["size"] = categories
         return format
-'''

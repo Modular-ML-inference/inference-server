@@ -4,10 +4,30 @@ metadata:
   name: fltraining-config-map-{{ include "trainingapp.fullname" . }}
 data:
   format.json: |
-    {
-    }
+    {"x":{"data_types":{
+    "image": {
+        "size": [32,32,3],
+        "normalized": false
+    }}},
+    "y":{"data_types":{
+    "numerical": {
+        "size": [1],
+        "normalized": false
+    } }}}
   model.json: |
-    {
+    {"x":
+    {"data_types":{
+    "image": {
+        "size": [32,32,3]
+    }   
+    }
+    }, 
+    "y": {"data_types":{
+      "categorical": {
+        "size": [10]
+    }   
+    }
+    }
     }
   transformation_pipeline_train.json: |
     [

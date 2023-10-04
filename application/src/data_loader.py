@@ -1,12 +1,11 @@
 import os
 from abc import ABC, abstractmethod
 
-from numpy import load, ndarray
+from numpy import load
 import tensorflow as tf
-from typing import Callable, Union, Tuple
+from typing import Callable
 from torch.utils.data import DataLoader
 from application.additional.plugin_managers import TrainTransformationManager
-#from tensorflow.keras.utils import to_categorical
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -49,14 +48,12 @@ class BuiltInDataLoader(DataLoader):
 
     def load_train(self):
         (x_train, y_train), (_, _) = self.method()
-        #y_train = to_categorical(y_train, 10)
         pipeline = self.trans_manager.load_transformation_pipeline(train=True)
         (x_train, y_train) = pipeline.transform_data((x_train, y_train))
         return x_train, y_train
 
     def load_test(self):
         (_, _), (x_test, y_test) = self.method()
-        #y_test = to_categorical(y_test, 10)
         pipeline = self.trans_manager.load_transformation_pipeline(train=False)
         (x_test, y_test) = pipeline.transform_data((x_test, y_test))
         return x_test, y_test
