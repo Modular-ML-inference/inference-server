@@ -150,7 +150,7 @@ class LOTrainingConfiguration(BaseModel):
     scheduler_config: Optional[SchedulerConfiguration]
     warmup_config: Optional[WarmupConfiguration]
     privacy_mechanisms: Dict[str, Union[HMConfiguration, DPConfiguration]] = Field(..., alias='privacy-mechanisms')
-    eval_metrics_value: float
+    eval_metrics_value: Optional[float]
 
     class Config:
         arbitrary_types_allowed = True
