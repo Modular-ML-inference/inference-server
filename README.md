@@ -354,7 +354,6 @@ The mechanism of [Adaptive Differential Privacy](https://github.com/adap/flower/
 The use of adaptive differential privacy and its specific parameters can be specified in the training configuration under the `privacy_mechanisms` keyword. If we include `dp-adaptive` in this dictionary, we can specify the parameters used by the Flower implementation under the `dp-adaptive` key and configure the training like this:
 
 ```json
-...
 "privacy-mechanisms":{
   "dp-adaptive":{
     "num_sampled_clients":"1"
