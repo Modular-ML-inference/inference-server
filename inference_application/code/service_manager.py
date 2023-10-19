@@ -15,6 +15,7 @@ class ServiceManager:
         # If loaded, load method
         method = setup_loader.load_method(setup_conf["service"]["method"])
         # And finally, servicer
-        servicer = setup_loader.load_servicer(setup_conf["service"]["servicer"])
+        servicer = setup_loader.load_servicer(
+            setup_conf["service"]["servicer"])
         # And link all of them together
         method(servicer(), server)

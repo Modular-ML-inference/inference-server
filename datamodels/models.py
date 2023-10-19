@@ -73,7 +73,7 @@ class OptimizerConfiguration(BaseModel):
     beta_2: Optional[float]
     beta_2_decay: Optional[float]
     epsilon_1: Optional[float]
-    epsilon_2:Optional[float]
+    epsilon_2: Optional[float]
     learning_rate_power: Optional[float]
     l1_regularization_strength: Optional[float]
     l2_regularization_strength: Optional[float]
@@ -93,7 +93,7 @@ class SchedulerConfiguration(BaseModel):
     total_iters: Optional[int]
     start_factor: Optional[float]
     end_factor: Optional[float]
-    # And then go with Keras callbacks. 
+    # And then go with Keras callbacks.
     monitor: Optional[str]
     min_delta: Optional[float]
     patience: Optional[int]
@@ -103,7 +103,6 @@ class SchedulerConfiguration(BaseModel):
     start_from_epoch: Optional[int]
     cooldown: Optional[int]
     min_lr: Optional[float]
-
 
 
 class DPConfiguration(BaseModel):
@@ -123,6 +122,7 @@ class WarmupConfiguration(BaseModel):
     warmup_factor: float
     scheduler_conf: SchedulerConfiguration
 
+
 class TrainingException(BaseModel):
     stage: str
     reason: str
@@ -133,6 +133,7 @@ class HMConfiguration(BaseModel):
     coeff_mod_bit_sizes: List[int] = [60, 40, 40]
     scale_bits: int = 40
     scheme: str = "CKKS"
+
 
 class LOTrainingConfiguration(BaseModel):
     client_type_id: str
@@ -149,7 +150,8 @@ class LOTrainingConfiguration(BaseModel):
     optimizer_config: Optional[OptimizerConfiguration]
     scheduler_config: Optional[SchedulerConfiguration]
     warmup_config: Optional[WarmupConfiguration]
-    privacy_mechanisms: Dict[str, Union[HMConfiguration, DPConfiguration]] = Field(..., alias='privacy-mechanisms')
+    privacy_mechanisms: Dict[str, Union[HMConfiguration,
+                                        DPConfiguration]] = Field(..., alias='privacy-mechanisms')
     eval_metrics_value: Optional[float]
 
     class Config:
@@ -157,7 +159,8 @@ class LOTrainingConfiguration(BaseModel):
 
 
 class MLModelData(BaseModel):
-    meta: Dict[str, str] = Field(None, title="model metadata as key-value pairs")
+    meta: Dict[str, str] = Field(
+        None, title="model metadata as key-value pairs")
 
 
 class MLModel(MLModelData):
@@ -168,9 +171,12 @@ class MLModel(MLModelData):
 
 
 class MachineCapabilities(BaseModel):
-    storage: Optional[float] = Field(None, title="the amount of storage needed in gigabytes, float")
-    RAM: Optional[float] = Field(None, title="the amount of RAM needed in gigabytes, float")
-    GPU: bool = Field(False, title="whether the existence of a GPU is needed, bool")
+    storage: Optional[float] = Field(
+        None, title="the amount of storage needed in gigabytes, float")
+    RAM: Optional[float] = Field(
+        None, title="the amount of RAM needed in gigabytes, float")
+    GPU: bool = Field(
+        False, title="whether the existence of a GPU is needed, bool")
     preinstalled_libraries: Dict[str, str] = Field(None,
                                                    title="a list of necessary/available preinstalled libraries with compliant versions")
     available_models: Dict[str, str] = Field(None,
@@ -181,10 +187,12 @@ class FLDataTransformation(BaseModel):
     id: str
     description: Optional[str] = Field(None,
                                        title="the available data explaining the purpose of a given transformation")
-    parameter_types: Dict[str, str] = Field(None, title="the list of input parameters and their types")
+    parameter_types: Dict[str, str] = Field(
+        None, title="the list of input parameters and their types")
     default_values: Dict[str, Any] = Field(None,
                                            title="for the parameters having default values, input them along with the description of values")
-    outputs: List[str] = Field(None, title="List of outputs and their expected types")
+    outputs: List[str] = Field(
+        None, title="List of outputs and their expected types")
     needs: MachineCapabilities
 
 
@@ -195,6 +203,7 @@ class FLDataTransformationConfig(BaseModel):
 
 class FLDataTransformationPipelineConfig(BaseModel):
     configuration: Dict[str, List[FLDataTransformationConfig]]
+
 
 class WebsocketResponse(BaseModel):
     status: str

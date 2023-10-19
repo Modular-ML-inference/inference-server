@@ -4,8 +4,8 @@ from logging import log, INFO
 import keras as keras
 import flwr as fl
 import requests as requests
-import tensorflow as tf
 import os
+
 
 class PickledKerasClient(fl.client.NumPyClient):
 
@@ -45,11 +45,14 @@ class PickledKerasClient(fl.client.NumPyClient):
         self.round += 1
         return loss, len(self.x_test), evaluations
 
+
 class MyCustomCallback(keras.callbacks.Callback):
-    def on_epoch_begin(self, epoch , logs=None):
+    def on_epoch_begin(self, epoch, logs=None):
         try:
             ORCHESTRATOR_SVR_ADDRESS = os.environ['ORCHESTRATOR_SVR_ADDRESS']
-            query = requests.get(f"{ORCHESTRATOR_SVR_ADDRESS}/recoverTrainingEpochs"f"/{str(epoch)}"f"/{str(epochs)}")
+            query = requests.get(
+                f"{ORCHESTRATOR_SVR_ADDRESS}/recoverTrainingEpochs"f"/{str(epoch)}"f"/{str(epochs)}")
             return query
         except requests.exceptions.ConnectionError as e:
-            log(INFO, f'Could not connect to orchestrator on {ORCHESTRATOR_SVR_ADDRESS}')
+            log(INFO,
+                f'Could not connect to orchestrator on {ORCHESTRATOR_SVR_ADDRESS}')

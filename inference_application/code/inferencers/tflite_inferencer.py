@@ -1,14 +1,14 @@
 from inference_application.code.inferencers.base_inferencer import BaseInferencer
-from prometheus_client import Counter
 import os
 import numpy as np
 import tensorflow as tf
+
 
 class TFLiteInferencer(BaseInferencer):
 
     def load_model(self, path):
         for p in os.listdir(path):
-        # check if current path is a file
+            # check if current path is a file
             if os.path.isfile(os.path.join(path, p)):
                 model = tf.lite.Interpreter(model_path=os.path.join(path, p))
                 break

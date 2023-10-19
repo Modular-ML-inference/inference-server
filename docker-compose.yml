@@ -2,7 +2,7 @@ version: '3'
 services:
   local_operations:
     restart: always
-    image: karola766/trainingapp:latest
+    image: assistiot/fl_local_operations:latest
     build:
       context: .
       dockerfile: application/Dockerfile
@@ -14,7 +14,7 @@ services:
       - DATA_PIPELINE_FILE=transformation_pipeline.json
       - DATA_FOLDER=/data
       - PREPROCESSED_FOLDER=/preprocessed
-      - REPOSITORY_ADDRESS=http://flrepository:9012 #http://flrepository:9012
+      - REPOSITORY_ADDRESS=http://flrepository:9012 
       - ORCHESTRATOR_SVR_ADDRESS=http://fl-orchestrator-app:5000
       - ORCHESTRATOR_WS_ADDRESS=ws://host.docker.internal:8765
       - WS_TIMEOUT=5
@@ -49,13 +49,12 @@ services:
       context: db
       dockerfile: "Dockerfile.db"
     restart: always
-    image: karola766/localdb:latest
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
       - default
   inferenceapp:
-    image: karola766/inferenceapp:latest
+    image: assistiot/fl_local_operations_inference:latest
     restart: always
     build:
       context: .
@@ -70,7 +69,3 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-networks:
-  default:
-    driver: bridge
-    name: custom_fl

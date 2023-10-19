@@ -27,10 +27,10 @@ secret_name = config.HM_SECRET_FILE
 public_name = config.HM_PUBLIC_FILE
 
 context = ts.context(
-            scheme,
-            poly_modulus_degree=poly_modulus_degree,
-            coeff_mod_bit_sizes=coeff_mod_bit_sizes
-          )
+    scheme,
+    poly_modulus_degree=poly_modulus_degree,
+    coeff_mod_bit_sizes=coeff_mod_bit_sizes
+)
 context.generate_galois_keys()
 context.global_scale = 2**scale_bits
 

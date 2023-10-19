@@ -22,7 +22,8 @@ async def start_client(training_id, config):
     unsafe_client = builder.prepare_training()
     privacy_manager = ClientPrivacyManager()
     client = privacy_manager.wrap(unsafe_client, config.privacy_mechanisms)
-    log(INFO, f'The client tries to access the server on {config.server_address}:{FEDERATED_PORT}')
+    log(INFO,
+        f'The client tries to access the server on {config.server_address}:{FEDERATED_PORT}')
     await run_in_threadpool(
         lambda: privacy_manager.run_method(server_address=f"{config.server_address}:{FEDERATED_PORT}", client=client))
     if training_id in current_jobs and current_jobs[training_id] > 1:

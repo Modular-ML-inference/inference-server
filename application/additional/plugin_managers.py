@@ -4,6 +4,7 @@ from data_transformation.exceptions import TransformationPipelineConfigurationIn
 from data_transformation.pipeline import BaseTransformationPipeline
 import deepdiff
 
+
 class TrainTransformationManager:
     '''
     Connects with object loaders to load transformations and various parts of the pipeline
@@ -12,7 +13,7 @@ class TrainTransformationManager:
     def __init__(self):
         self.trans_loader = TrainingTransformationLoader()
         self.format_loader = TrainingFormatLoader()
-    
+
     def check_dict_intersection(self, trans_form, model_form):
         '''
         A small function to check whether transformed format has all the features 

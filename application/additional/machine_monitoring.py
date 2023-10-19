@@ -8,9 +8,13 @@ import psutil
 
 from application.config import DATA_FOLDER, DATA_FORMAT_FILE, DATA_PIPELINE_FILE
 
-i_stor = Gauge('machine_capabilities_free_storage', 'Information on current machine capabilities as seen by FL LO (memory and storage in GB)')
-i_mem = Gauge('machine_capabilities_free_memory', 'Information on current machine capabilities as seen by FL LO (memory and storage in GB)')
-i_gpu = Gauge('machine_capabilities_gpu', 'Information on current machine capabilities as seen by FL LO (memory and storage in GB)')
+i_stor = Gauge('machine_capabilities_free_storage',
+               'Information on current machine capabilities as seen by FL LO (memory and storage in GB)')
+i_mem = Gauge('machine_capabilities_free_memory',
+              'Information on current machine capabilities as seen by FL LO (memory and storage in GB)')
+i_gpu = Gauge('machine_capabilities_gpu',
+              'Information on current machine capabilities as seen by FL LO (memory and storage in GB)')
+
 
 def check_machine_capabilities():
     """                    
@@ -19,6 +23,7 @@ def check_machine_capabilities():
     i_stor.set(check_storage())
     i_mem.set(check_memory())
     i_gpu.set(check_gpu())
+
 
 def check_data_changes(folder=DATA_FOLDER):
     """
@@ -29,8 +34,10 @@ def check_data_changes(folder=DATA_FOLDER):
     or the number of files in the directory has changed.
     """
     time_folder = os.path.getmtime(folder)
-    time_format = os.path.getmtime(os.path.join(folder, DATA_FORMAT_FILE)) if os.path.isfile(os.path.join(folder, DATA_FORMAT_FILE)) else None
-    time_pipeline = os.path.getmtime(os.path.join(folder, DATA_PIPELINE_FILE)) if os.path.isfile(os.path.join(folder, DATA_PIPELINE_FILE)) else None
+    time_format = os.path.getmtime(os.path.join(folder, DATA_FORMAT_FILE)) if os.path.isfile(
+        os.path.join(folder, DATA_FORMAT_FILE)) else None
+    time_pipeline = os.path.getmtime(os.path.join(folder, DATA_PIPELINE_FILE)) if os.path.isfile(
+        os.path.join(folder, DATA_PIPELINE_FILE)) else None
     return time_folder, time_format, time_pipeline
 
 

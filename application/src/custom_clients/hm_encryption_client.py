@@ -34,17 +34,23 @@ class HMEncryptionClient(Client):
 
     def get_parameters(self, config) -> common.GetParametersRes:
         weights = self.client.get_parameters(config)
-        v_mid = [ts.plain_tensor(v) if len(v.shape) != 0 else ts.plain_tensor([v]) for v in weights]
-        weights = [ts.ckks_tensor(self.context, m) if len(m.shape) != 0 else np.array(0) for m in v_mid]
+        v_mid = [ts.plain_tensor(v) if len(v.shape) !=
+                 0 else ts.plain_tensor([v]) for v in weights]
+        weights = [ts.ckks_tensor(self.context, m) if len(
+            m.shape) != 0 else np.array(0) for m in v_mid]
         parameters = ts_tensors_to_parameters(weights)
         return common.GetParametersRes(status=Status(code=Code.OK, message="Success"), parameters=parameters)
 
     def fit(self,  ins: common.FitIns) -> common.FitRes:
         tensors = parameters_to_ts_tensors(ins.parameters)
-        weights = [np.array(tensor.decrypt().tolist(), dtype=np.float32) for tensor in tensors]
-        updated_params, num_examples, metrics = self.client.fit(weights, ins.config)
-        v_mid = [ts.plain_tensor(v) if len(v.shape) != 0 else ts.plain_tensor([v]) for v in updated_params]
-        v_mid1 = [ts.ckks_tensor(self.context, m) if len(m.shape) != 0 else np.array(0) for m in v_mid]
+        weights = [np.array(tensor.decrypt().tolist(), dtype=np.float32)
+                   for tensor in tensors]
+        updated_params, num_examples, metrics = self.client.fit(
+            weights, ins.config)
+        v_mid = [ts.plain_tensor(v) if len(
+            v.shape) != 0 else ts.plain_tensor([v]) for v in updated_params]
+        v_mid1 = [ts.ckks_tensor(self.context, m) if len(
+            m.shape) != 0 else np.array(0) for m in v_mid]
         v_mid = ts_tensors_to_parameters(v_mid1)
         return common.FitRes(
             status=Status(code=Code.OK, message="Success"),
@@ -55,7 +61,8 @@ class HMEncryptionClient(Client):
 
     def evaluate(self, ins: common.EvaluateIns) -> common.EvaluateRes:
         tensors = parameters_to_ts_tensors(ins.parameters)
-        weights = [np.array(tensor.decrypt().tolist(), dtype=np.float32) for tensor in tensors]
+        weights = [np.array(tensor.decrypt().tolist(), dtype=np.float32)
+                   for tensor in tensors]
         loss, num_examples, metrics = self.client.evaluate(weights, ins.config)
         return common.EvaluateRes(
             status=Status(code=Code.OK, message="Success"),

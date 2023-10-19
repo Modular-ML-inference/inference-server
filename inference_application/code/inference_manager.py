@@ -1,7 +1,7 @@
 
 from data_transformation.exceptions import TransformationPipelineConfigurationInsufficientException
 from data_transformation.pipeline import BaseTransformationPipeline
-from prometheus_client import start_http_server, Summary
+from prometheus_client import Summary
 from inference_application.code.inferencers.tflite_inferencer import TFLiteInferencer
 from inference_application.code.utils import InferenceFormatLoader, InferenceModelLoader, InferenceSetupLoader, InferenceTransformationLoader
 
@@ -27,8 +27,6 @@ class InferenceManager:
         model_conf = loader.check_configuration()
         loader.load(model_conf["model_name"], model_conf["model_version"])
         load_path = loader.check_nested_path(loader.temp_dir)
-        model_library = model_conf["library"]
-        #inferencer = library_inferencers[model_library]()
         setup_loader = InferenceSetupLoader()
         setup_conf = setup_loader.load_setup()
         # Load inferencer

@@ -12,6 +12,7 @@ class BadConfigurationError(Exception):
         self.message = f'{message} in {subtype}'
         super().__init__(self.message)
 
+
 class ModelNotLoadedProperlyError(Exception):
     """Exception raised in the cases of training model not loading properly.
 

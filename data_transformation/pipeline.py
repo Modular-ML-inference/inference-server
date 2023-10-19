@@ -1,6 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List
-
 
 class DataTransformationPipeline(ABC):
     """
@@ -20,6 +18,7 @@ class DataTransformationPipeline(ABC):
     def transform_format(self, format):
         pass
 
+
 class BaseTransformationPipeline(DataTransformationPipeline):
 
     def __init__(self, transform_list):
@@ -32,7 +31,7 @@ class BaseTransformationPipeline(DataTransformationPipeline):
         for transform in self.pipeline:
             data = transform.transform_data(data)
         return data
-    
+
     def transform_format(self, format):
         for transform in self.pipeline:
             format = transform.transform_format(format)

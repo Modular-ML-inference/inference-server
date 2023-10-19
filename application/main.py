@@ -12,7 +12,7 @@ import uvicorn
 from application.additional.machine_monitoring import check_packages, \
     check_models, setup_check_data_changes
 from application.additional.utils import check_storage, check_memory, check_gpu
-from config import PORT, HOST, DB_PORT, TOTAL_LOCAL_OPERATIONS, PREPROCESSED_FOLDER, DATA_FORMAT_FILE, DATA_FOLDER
+from config import PORT, HOST, DB_PORT, TOTAL_LOCAL_OPERATIONS, DATA_FORMAT_FILE, DATA_FOLDER
 from fastapi import BackgroundTasks
 from fastapi import FastAPI, status, UploadFile, File, Response, HTTPException
 from pymongo import MongoClient
@@ -27,6 +27,8 @@ metrics_app = prometheus_client.make_asgi_app()
 app.mount("/metrics", metrics_app)
 
 # Receive configuration for training job
+
+
 @app.post("/job/config/{training_id}")
 async def receive_updated(training_id, data: LOTrainingConfiguration, background_tasks: BackgroundTasks):
     try:
@@ -34,7 +36,8 @@ async def receive_updated(training_id, data: LOTrainingConfiguration, background
             src.local_clients.current_jobs[training_id] = 1
         else:
             src.local_clients.current_jobs[training_id] += 1
-        background_tasks.add_task(src.local_clients.start_client, training_id=training_id, config=data)
+        background_tasks.add_task(
+            src.local_clients.start_client, training_id=training_id, config=data)
     except Exception as e:
         print("An exception occurred ::", e)
         return 500
@@ -94,7 +97,8 @@ def retrieve_capabilities():
     storage_left = check_storage()
     package_versions = check_packages()
     model_versions = check_models()
-    m = MachineCapabilities(storage=storage_left, RAM=memory_left, GPU=is_gpu, preinstalled_libraries=package_versions, available_models=model_versions)
+    m = MachineCapabilities(storage=storage_left, RAM=memory_left, GPU=is_gpu,
+                            preinstalled_libraries=package_versions, available_models=model_versions)
     return m
 
 
@@ -104,26 +108,28 @@ def retrieve_current_format():
     An endpoint that returns the current format of the data
     """
     format_file = os.path.join("application", "configurations", "format.json")
-    #format_file = os.path.join(PREPROCESSED_FOLDER, DATA_FORMAT_FILE)
+    # format_file = os.path.join(PREPROCESSED_FOLDER, DATA_FORMAT_FILE)
     if not os.path.exists(format_file):
         format_file = os.path.join(DATA_FOLDER, DATA_FORMAT_FILE)
     with open(format_file) as f:
         format = json.load(f)
     return format
 
+
 def worker_socket():
     second_loop = asyncio.new_event_loop()
     asyncio.set_event_loop(second_loop)
     second_loop.run_until_complete(websocket_client())
+
 
 if __name__ == "__main__":
     os.environ['FL_LO_STATE'] = 'READY'
     # First, start the daemon monitoring data changes
     t = threading.Thread(target=worker_socket)
     t.start()
-    daemon = Thread(target=setup_check_data_changes, daemon=True, name='Data Modification Monitor')
+    daemon = Thread(target=setup_check_data_changes,
+                    daemon=True, name='Data Modification Monitor')
     daemon.start()
     # Then the websocket client
     # Finally, the main server
     uvicorn.run("main:app", host=HOST, port=int(PORT))
-

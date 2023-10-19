@@ -1,14 +1,22 @@
-{"x":
-    {"data_types":{
-    "image": {
-        "size": [32,32,3]
- }   
-}
-}, 
-"y": {"data_types":{
-    "categorical": {
-        "size": [10]
- }   
-}
-}
+{
+    "x": {
+        "data_types": {
+            "image": {
+                "size": [
+                    32,
+                    32,
+                    3
+                ]
+            }
+        }
+    },
+    "y": {
+        "data_types": {
+            "categorical": {
+                "size": [
+                    10
+                ]
+            }
+        }
+    }
 }

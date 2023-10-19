@@ -1,10 +1,24 @@
-{"x":{"data_types":{
-    "image": {
-        "size": [32,32,3],
-        "normalized": false
- }}},
- "y":{"data_types":{
-    "numerical": {
-        "size": [1],
-        "normalized": false
- } }}}
+{
+    "x": {
+        "data_types": {
+            "image": {
+                "size": [
+                    32,
+                    32,
+                    3
+                ],
+                "normalized": false
+            }
+        }
+    },
+    "y": {
+        "data_types": {
+            "numerical": {
+                "size": [
+                    1
+                ],
+                "normalized": false
+            }
+        }
+    }
+}

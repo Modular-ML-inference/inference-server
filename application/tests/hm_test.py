@@ -74,13 +74,18 @@ class HMTestClient(fl.client.NumPyClient):
         mean_class2 = train.groupby('pclass').mean()['age'].round().loc[2]
         mean_class3 = train.groupby('pclass').mean()['age'].round().loc[3]
 
-        train.loc[train['pclass'] == 1, 'age'] = train.loc[train['pclass'] == 1, 'age'].fillna(value=mean_class1)
-        train.loc[train['pclass'] == 2, 'age'] = train.loc[train['pclass'] == 2, 'age'].fillna(value=mean_class2)
-        train.loc[train['pclass'] == 3, 'age'] = train.loc[train['pclass'] == 3, 'age'].fillna(value=mean_class3)
+        train.loc[train['pclass'] == 1, 'age'] = train.loc[train['pclass']
+                                                           == 1, 'age'].fillna(value=mean_class1)
+        train.loc[train['pclass'] == 2, 'age'] = train.loc[train['pclass']
+                                                           == 2, 'age'].fillna(value=mean_class2)
+        train.loc[train['pclass'] == 3, 'age'] = train.loc[train['pclass']
+                                                           == 3, 'age'].fillna(value=mean_class3)
 
-        train.drop(['embark_town', 'who', 'class', 'deck', 'alive'], axis=1, inplace=True)
+        train.drop(['embark_town', 'who', 'class',
+                   'deck', 'alive'], axis=1, inplace=True)
 
-        train.dropna(inplace=True)  # dropping the 1 missing value in Embarked column
+        # dropping the 1 missing value in Embarked column
+        train.dropna(inplace=True)
 
         # I will now convert some of the categorical features in the dataset into dummy variables that our machine learning model can accept.
 
@@ -97,7 +102,8 @@ class HMTestClient(fl.client.NumPyClient):
         X = train.drop('survived', axis=1)
         y = train['survived']
 
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size=0.3, random_state=101)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+            X, y, test_size=0.3, random_state=101)
         # Create LogisticRegression Model
         self.model = LogisticRegression()
 

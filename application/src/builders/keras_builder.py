@@ -1,17 +1,14 @@
 from logging import log, INFO
 
 import keras as keras
-import flwr as fl
 import requests as requests
 import tensorflow as tf
-import os
 
 from application.additional.exceptions import BadConfigurationError, ModelNotLoadedProperlyError
 from application.additional.object_loaders import TrainingSetupLoader
 from application.additional.utils import BasicModelLoader
 from application.config import ORCHESTRATOR_SVR_ADDRESS
 from application.src.clientbuilder import FlowerClientInferenceBuilder, FlowerClientTrainingBuilder
-from application.src.data_loader import BinaryDataLoader, BuiltInDataLoader
 
 keras_optimizers = {
     "sgd": tf.keras.optimizers.SGD,
@@ -47,7 +44,6 @@ class KerasBuilder(FlowerClientTrainingBuilder, FlowerClientInferenceBuilder):
         # Load the right client
         client_id = setup["client_library"][self.library]["id"]
         self.client = setup_loader.load_client(client_id)(self.id, self.configuration, data_loader)
-        #self.client = KerasClient(self.id, self.configuration, data_loader)
         self.client.optimizer = self.add_optimizer()
         self.client.lr_scheduler = self.add_scheduler()
         self.client.model = self.add_model()
@@ -105,50 +101,3 @@ class KerasBuilder(FlowerClientTrainingBuilder, FlowerClientInferenceBuilder):
             raise BadConfigurationError("scheduler/callback")
         log(INFO, "Scheduler/callback added")
         return lr_scheduler
-'''
-class KerasClient(fl.client.NumPyClient):
-
-    def __init__(self, training_id, config, data_loader):
-        self.priv_config = config
-        self.round = 1
-        self.training_id = training_id
-        self.data_loader = data_loader
-        (self.x_train, self.y_train) = self.data_loader.load_train()
-        (self.x_test, self.y_test) = self.data_loader.load_test()
-
-    def get_parameters(self, config):
-        return self.model.get_weights()
-
-    def fit(self, parameters, config):
-        self.model.set_weights(parameters)
-        global epochs
-        epochs = self.priv_config.config[0].epochs
-        batch_size = self.priv_config.config[0].batch_size
-        steps_per_epoch = self.priv_config.config[0].steps_per_epoch
-        # Set up the necessary callback
-        callbacks = [MyCustomCallback()]
-        # Add a custom callback if so set up
-        if self.lr_scheduler:
-            callbacks.append(self.lr_scheduler)
-        self.model.fit(self.x_train, self.y_train, epochs=epochs, batch_size=batch_size,
-                       steps_per_epoch=steps_per_epoch, callbacks=callbacks)
-        return self.model.get_weights(), len(self.x_train), {}
-
-    def evaluate(self, parameters, config):
-        self.model.set_weights(parameters)
-        metrics = ["loss"] + [m for m in self.priv_config.eval_metrics]
-        a = self.model.evaluate(self.x_test, self.y_test)
-        evaluations = {m: a[i] for i, m in enumerate(metrics)}
-        loss = evaluations["loss"]
-        del evaluations["loss"]
-        self.round += 1
-        return loss, len(self.x_test), evaluations
-
-class MyCustomCallback(keras.callbacks.Callback):
-    def on_epoch_begin(self, epoch , logs=None):
-        try:
-            query = requests.get(f"{ORCHESTRATOR_SVR_ADDRESS}/recoverTrainingEpochs"f"/{str(epoch)}"f"/{str(epochs)}")
-            return query
-        except requests.exceptions.ConnectionError as e:
-            log(INFO, f'Could not connect to orchestrator on {ORCHESTRATOR_SVR_ADDRESS}')
-'''

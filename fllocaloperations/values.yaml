@@ -14,7 +14,7 @@ inferenceapp:
   tier: internal
   custom_setup: False
   image:
-    repository: karola766/inferenceapp
+    repository: assistiot/fl_local_operations_inference
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
@@ -80,7 +80,7 @@ trainingapp:
   tier: external
   custom_setup: False
   image:
-    repository: karola766/trainingapp
+    repository: assistiot/fl_local_operations
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
@@ -165,7 +165,7 @@ trainingapp:
 db:
   tier: internal
   image:
-    repository: karola766/localdb
+    repository: assistiot/fl_repository_db
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"

@@ -29,19 +29,21 @@ class BinaryDataLoader(DataLoader):
         self.path = path
 
     def load_train(self):
-        x_train = load(os.path.join(self.path, "x_train.npy"), allow_pickle=True)
-        y_train = load(os.path.join(self.path, "y_train.npy"), allow_pickle=True)
+        x_train = load(os.path.join(
+            self.path, "x_train.npy"), allow_pickle=True)
+        y_train = load(os.path.join(
+            self.path, "y_train.npy"), allow_pickle=True)
         return x_train, y_train
-
 
     def load_test(self):
         x_test = load(os.path.join(self.path, "x_test.npy"), allow_pickle=True)
         y_test = load(os.path.join(self.path, "y_test.npy"), allow_pickle=True)
         return x_test, y_test
 
+
 class BuiltInDataLoader(DataLoader):
     method: Callable
-    
+
     def __init__(self, method=tf.keras.datasets.cifar10.load_data):
         self.method = method
         self.trans_manager = TrainTransformationManager()

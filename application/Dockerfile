@@ -1,11 +1,10 @@
-FROM karola766/federated-learning:base_image_fl
+FROM python:3.8.3-slim-buster
 WORKDIR /code
 RUN apt-get update
 RUN apt-get install ffmpeg libsm6 libxext6  -y
 COPY application/requirements.txt /code/requirements.txt
 RUN /usr/local/bin/python -m pip install --upgrade pip
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
-#RUN pip install -e git+https://github.com/Karolina-Bogacka/flower-varied-topology.git#egg=flwr
 COPY application/ /code/application
 COPY data_transformation/ /code/data_transformation
 COPY datamodels/ /code/datamodels

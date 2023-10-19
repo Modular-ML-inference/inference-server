@@ -9,7 +9,7 @@ __pycache__/
 
 data/*
 .idea
-
+tests/*
 # Distribution / packaging
 .Python
 build/
