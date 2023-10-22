@@ -391,6 +391,12 @@ For the extended documentation on how to develop pluggable modules based on some
 
 The Prometheus metrics are available for scraping on the the port `9050` under url `/metrics` on the trainingapp, and on the port `9000` without any additional url path changes in the inferenceapp.
 
+## Authors
+
+
+Karolina Bogacka
+
+
 ## Licensing
 
 The FL Local Operations is released under the Apache 2.0 license, as we have internally concluded that we are not "offering the functionality of MongoDB, or modified versions of MongoDB, to third parties as a service". However, potential future commercial adopters should be aware that our project uses MongoDB in order to be able to accurately determine the license most applicable to their projects. 
