@@ -394,7 +394,9 @@ The Prometheus metrics are available for scraping on the the port `9050` under u
 ## Authors
 
 
-Karolina Bogacka
+- Karolina Bogacka
+- Piotr Sowiński
+- Jose Antonio Clemente Perez
 
 
 ## Licensing
