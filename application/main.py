@@ -108,7 +108,6 @@ def retrieve_current_format():
     An endpoint that returns the current format of the data
     """
     format_file = os.path.join("application", "configurations", "format.json")
-    # format_file = os.path.join(PREPROCESSED_FOLDER, DATA_FORMAT_FILE)
     if not os.path.exists(format_file):
         format_file = os.path.join(DATA_FOLDER, DATA_FORMAT_FILE)
     with open(format_file) as f:

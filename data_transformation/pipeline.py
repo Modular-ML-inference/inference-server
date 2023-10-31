@@ -22,6 +22,7 @@ class DataTransformationPipeline(ABC):
 class BaseTransformationPipeline(DataTransformationPipeline):
 
     def __init__(self, transform_list):
+        self.transient_values = {}
         self.construct_pipeline(transform_list)
 
     def construct_pipeline(self, transform_list):
@@ -29,7 +30,9 @@ class BaseTransformationPipeline(DataTransformationPipeline):
 
     def transform_data(self, data):
         for transform in self.pipeline:
+            transform.transient_values = self.transient_values
             data = transform.transform_data(data)
+            self.transient_values = transform.transient_values
         return data
 
     def transform_format(self, format):
