@@ -37,7 +37,7 @@ For the extended documentation on how to develop pluggable modules based on some
 
 ## Prometheus metric monitoring
 
-The Prometheus metrics are available for scraping on the the port `9050` under url `/metrics` on the trainingapp, and on the port `9000` without any additional url path changes in the inferenceapp.
+The Prometheus metrics are available for scraping on the port `9000` without any additional url path changes in the inferenceapp.
 
 
 ## Licensing
