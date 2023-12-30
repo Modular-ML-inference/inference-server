@@ -1,11 +1,13 @@
 {
     "data_types": {
-        "numerical": {
+        "tensor": {
             "size": [
                 5,
-                4
+                3
             ],
-            "normalized": false
+            "normalized": false,
+            "vector_length": false,
+            "unit": "tag"
         }
     }
 }

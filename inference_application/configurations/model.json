@@ -10,7 +10,9 @@
                     5,
                     4
                 ],
-                "normalized": true
+                "normalized": true,
+                "vector_length": true,
+                "unit": "milligraviton"
             }
         }
     }

@@ -93,8 +93,10 @@ class InferenceModelLoader(ModelLoader):
 
 class InferenceTransformationLoader:
     temp_dir = "temp"
-    config_path = os.path.join(
-        "inference_application", "configurations", "transformation_pipeline.json")
+    pre_config_path = os.path.join(
+        "inference_application", "configurations", "preprocessing_pipeline.json")
+    post_config_path = os.path.join(
+        "inference_application", "configurations", "postprocessing_pipeline.json")
     local_files = os.path.join(
         "inference_application", "local_cache", "transformations")
     rep_name = if_env('REPOSITORY_ADDRESS')
@@ -141,12 +143,13 @@ class InferenceTransformationLoader:
         if os.path.exists(f'{self.temp_dir}.zip'):
             os.remove(f'{self.temp_dir}.zip')
 
-    def load_from_config(self):
+    def load_from_config(self, preprocessing=True):
         """
         Loads the configuration from the predefined location and constructs a list of transformation from that
         """
-        if os.path.isfile(self.config_path):
-            with open(self.config_path, 'rb') as f:
+        config_path = self.pre_config_path if preprocessing else self.post_config_path
+        if os.path.isfile(config_path):
+            with open(config_path, 'rb') as f:
                 config = json.load(f)
             pipeline = []
             for transform in config:

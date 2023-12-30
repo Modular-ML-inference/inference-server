@@ -42,6 +42,13 @@ data:
         }
     }
     ]
+  postprocessing_pipeline.json: |
+    [
+      {
+        "id": "custom.postprocess_tensorflow_tensor",
+        "parameters": {}
+      }
+    ]
   setup.json: |
     {
     "service": {

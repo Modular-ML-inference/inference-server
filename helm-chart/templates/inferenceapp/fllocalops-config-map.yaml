@@ -12,12 +12,3 @@ data:
   DATA_FOLDER: "/data"
   PREPROCESSED_FOLDER: "/preprocessed"
   REPOSITORY_ADDRESS: "http://flrepositorylocaldb2-flrepositorydb-flrepository.default.svc.cluster.local:9012"
-  ORCHESTRATOR_SVR_ADDRESS: "http://fl-orchestrator-app:5000" 
-  ORCHESTRATOR_WS_ADDRESS: "ws://fl-orchestrator-app:8765"
-  WS_TIMEOUT: "5"
-  FEDERATED_PORT: "8080"
-  SERVER_ADDRESS: "fltrainingcollectorlocal-trainingmain-svc2"
-  DATABASE_NAME: {{ include "db.fullname" . }}
-  TOTAL_LOCAL_OPERATIONS: "1"
-  HM_SECRET_FILE: "secret.txt"
-  HM_PUBLIC_FILE: "public.txt"

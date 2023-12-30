@@ -1,4 +1,6 @@
 
+from logging import INFO, log
+import logging
 from data_transformation.exceptions import TransformationPipelineConfigurationInsufficientException
 from data_transformation.pipeline import BaseTransformationPipeline
 from prometheus_client import Summary
@@ -17,8 +19,13 @@ class InferenceManager:
         format = InferenceFormatLoader().load_format()
         return format
 
-    def load_transformation_pipeline(self):
+    def load_preprocessing_pipeline(self):
         transformation_list = InferenceTransformationLoader().load_from_config()
+        pipeline = BaseTransformationPipeline(transformation_list)
+        return pipeline
+    
+    def load_postprocessing_pipeline(self):
+        transformation_list = InferenceTransformationLoader().load_from_config(preprocessing=False)
         pipeline = BaseTransformationPipeline(transformation_list)
         return pipeline
 
@@ -45,14 +52,19 @@ class InferenceManager:
     def prepare_inference(self):
         # Load up all elements
         data_format = self.load_data_format()
-        transformation_pipeline = self.load_transformation_pipeline()
+        preprocessing_pipeline = self.load_preprocessing_pipeline()
+        postprocessing_pipeline = self.load_postprocessing_pipeline()
         inferencer = self.load_inferencer()
         # Check if the transformed data format agrees with the necessary model format
-        new_format = transformation_pipeline.transform_format(data_format)
+        new_format = preprocessing_pipeline.transform_format(data_format)
+        logger = logging.getLogger('example_logger')
+        logger.log(INFO, new_format)
+        print(new_format)
         if new_format == inferencer.format():
             # If so, reload without exception
             self.data_format = data_format
-            self.transformation_pipeline = transformation_pipeline
+            self.preprocessing_pipeline = preprocessing_pipeline
+            self.postprocessing_pipeline = postprocessing_pipeline
             self.inferencer = inferencer
         else:
             raise TransformationPipelineConfigurationInsufficientException()

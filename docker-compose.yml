@@ -1,58 +1,5 @@
 version: '3'
 services:
-  local_operations:
-    restart: always
-    image: assistiot/fl_local_operations:latest
-    build:
-      context: .
-      dockerfile: application/Dockerfile
-    environment:
-      - HOST=0.0.0.0
-      - PORT=9050
-      - DB_PORT=27017
-      - DATA_FORMAT_FILE=format.json
-      - DATA_PIPELINE_FILE=transformation_pipeline.json
-      - DATA_FOLDER=/data
-      - PREPROCESSED_FOLDER=/preprocessed
-      - REPOSITORY_ADDRESS=http://flrepository:9012 
-      - ORCHESTRATOR_SVR_ADDRESS=http://fl-orchestrator-app:5000
-      - ORCHESTRATOR_WS_ADDRESS=ws://host.docker.internal:8765
-      - WS_TIMEOUT=5
-      - FEDERATED_PORT=8080
-      - SERVER_ADDRESS=fl-training-collector_trainingmain_1
-      - DATABASE_NAME=db-0
-      - TOTAL_LOCAL_OPERATIONS=1
-      - HM_SECRET_FILE=secret.txt
-      - HM_PUBLIC_FILE=public.txt
-      - USER_INDEX=0
-      - FL_LOCAL_OP_DATA_FOLDER="./data"
-    networks:
-      - default
-    ports:
-      - "905${USER_INDEX}:9050"
-      - 9003:9000
-      - 30080:80
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    depends_on:
-      - db
-    volumes:
-      - type: bind
-        source: ${FL_LOCAL_OP_DATA_FOLDER}
-        target: /data
-      - type: bind
-        source: ./preprocessed
-        target: /preprocessed
-  db:
-    container_name: "db-${USER_INDEX}"
-    build:
-      context: db
-      dockerfile: "Dockerfile.db"
-    restart: always
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    networks:
-      - default
   inferenceapp:
     image: assistiot/fl_local_operations_inference:latest
     restart: always

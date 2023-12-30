@@ -2,9 +2,10 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 import grpc.experimental
-from .basic_inference_pb2 import *
+from inference_application.code.protocompiled import extended_inference_pb2 as inference__application_dot_code_dot_proto_dot_extended__inference__pb2
 
-class BasicInferenceServiceStub(object):
+
+class ExtendedInferenceServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -14,13 +15,13 @@ class BasicInferenceServiceStub(object):
             channel: A grpc.Channel.
         """
         self.predict = channel.stream_stream(
-                '/basic_inference.BasicInferenceService/predict',
-                request_serializer=BasicInferenceRequest.SerializeToString,
-                response_deserializer=BasicInferenceResponse.FromString,
+                '/extended_inference.ExtendedInferenceService/predict',
+                request_serializer=inference__application_dot_code_dot_proto_dot_extended__inference__pb2.ExtendedInferenceRequest.SerializeToString,
+                response_deserializer=inference__application_dot_code_dot_proto_dot_extended__inference__pb2.ExtendedInferenceResponse.FromString,
                 )
 
 
-class BasicInferenceServiceServicer(object):
+class ExtendedInferenceServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def predict(self, request_iterator, context):
@@ -30,21 +31,21 @@ class BasicInferenceServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_BasicInferenceServiceServicer_to_server(servicer, server):
+def add_ExtendedInferenceServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'predict': grpc.stream_stream_rpc_method_handler(
                     servicer.predict,
-                    request_deserializer=BasicInferenceRequest.FromString,
-                    response_serializer=BasicInferenceResponse.SerializeToString,
+                    request_deserializer=inference__application_dot_code_dot_proto_dot_extended__inference__pb2.ExtendedInferenceRequest.FromString,
+                    response_serializer=inference__application_dot_code_dot_proto_dot_extended__inference__pb2.ExtendedInferenceResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'basic_inference.BasicInferenceService', rpc_method_handlers)
+            'extended_inference.ExtendedInferenceService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class BasicInferenceService(object):
+class ExtendedInferenceService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -58,8 +59,8 @@ class BasicInferenceService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.stream_stream(request_iterator, target, '/basic_inference.BasicInferenceService/predict',
-            BasicInferenceRequest.SerializeToString,
-            BasicInferenceResponse.FromString,
+        return grpc.experimental.stream_stream(request_iterator, target, '/extended_inference.ExtendedInferenceService/predict',
+            inference__application_dot_code_dot_proto_dot_extended__inference__pb2.ExtendedInferenceRequest.SerializeToString,
+            inference__application_dot_code_dot_proto_dot_extended__inference__pb2.ExtendedInferenceResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

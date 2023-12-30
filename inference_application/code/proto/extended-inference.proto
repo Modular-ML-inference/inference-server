@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "tensorflow/core/framework/tensor.proto";
+package extended_inference;
+
+message ExtendedInferenceRequest{
+    int32 id = 1;
+    map<string, tensorflow.TensorProto> input = 2;
+}
+
+message ExtendedInferenceResponse{
+    int32 id = 1;
+    map<string, tensorflow.TensorProto> output = 2;
+}
+
+service ExtendedInferenceService{
+    rpc predict(stream ExtendedInferenceRequest) returns (stream ExtendedInferenceResponse) {}
+}
