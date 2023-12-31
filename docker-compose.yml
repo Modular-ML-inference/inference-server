@@ -1,7 +1,7 @@
 version: '3'
 services:
   inferenceapp:
-    image: assistiot/fl_local_operations_inference:latest
+    image: karola766/fl_local_operations_inference:latest
     restart: always
     build:
       context: .
