@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package basic_inference;
+
+message Tensor32 {
+    repeated float array = 1;
+    repeated int32 shape = 2;
+}
+
+message BasicInferenceRequest{
+    int32 id = 1;
+    Tensor32 tensor = 2;
+}
+
+message BasicInferenceResponse{
+    int32 id = 1;
+    Tensor32 tensor = 2;
+}
+
+service BasicInferenceService{
+    rpc predict(stream BasicInferenceRequest) returns (stream BasicInferenceResponse) {}
+}
