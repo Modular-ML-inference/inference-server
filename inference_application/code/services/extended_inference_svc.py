@@ -24,14 +24,13 @@ class ExtendedInferenceService(extended_inference_pb2_grpc.ExtendedInferenceServ
     @h.time()
     def predict(self, request_iterator, _):
         for request in request_iterator:
-            # Execute inference in a mutex lock
             with inference_lock:
                 input_data = self.inference_manager.preprocessing_pipeline.transform_data(
                     request)
                 # Here, we will call the inference manager and get the global inferencer for prediction
                 prediction = self.inference_manager.inferencer.predict(input_data)
-                tensor = self.inference_manager.postprocessing_pipeline.transform_data(prediction)
+                output = self.inference_manager.postprocessing_pipeline.transform_data(prediction)
                 response = extended_inference_pb2.ExtendedInferenceResponse(id=int(request.id),
-                                                                    output={"prediction":tensor})
+                                                                    output=output)
                 # stream the response back
                 yield response

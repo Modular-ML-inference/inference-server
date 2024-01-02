@@ -57,9 +57,6 @@ class InferenceManager:
         inferencer = self.load_inferencer()
         # Check if the transformed data format agrees with the necessary model format
         new_format = preprocessing_pipeline.transform_format(data_format)
-        logger = logging.getLogger('example_logger')
-        logger.log(INFO, new_format)
-        print(new_format)
         if new_format == inferencer.format():
             # If so, reload without exception
             self.data_format = data_format
