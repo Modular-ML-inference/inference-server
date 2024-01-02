@@ -2,18 +2,8 @@
     "model_name": "fall-detection",
     "model_version": "pilot-2-2",
     "library": "tflite",
-    "input_format": {
-        "data_types": {
-            "numerical": {
-                "size": [
-                    1,
-                    9,
-                    4
-                ],
-                "normalized": true,
-                "vector_length": true,
-                "unit": "milligraviton"
-            }
-        }
-    }
+    "input_format": {"data_types": 
+    {"list": 
+    {"torch-tensor": 
+    {"size": [1200, 4, 900]}}}}
 }

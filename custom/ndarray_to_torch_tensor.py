@@ -41,7 +41,7 @@ class ImgToTensorTransformation(DataTransformation):
         return data
 
     def transform_format(self, format):
-        if "numerical" in format["data_types"]:
-            format["data_types"]["torch-tensor"] = format["data_types"]["numerical"]
-        format["data_types"].pop("numerical")
+        if "list" in format["data_types"] and "image" in format["data_types"]["list"]:
+            format["data_types"]["list"]["torch-tensor"] = format["data_types"]["list"]["image"]
+        format["data_types"]["list"].pop("image")
         return format

@@ -11,7 +11,7 @@ class ImgTransposeTransformation(DataTransformation):
     id = "car-damage-img-transpose"
     description = "Transposes the axis of the image from [H, W, C] to match tensor dimensions [C, H, W]"
     parameter_types = {"axes": Tuple[int]}
-    default_values = {"axes": (2,0,1)}
+    default_values = {"axes": (2,0, 1)}
     outputs = [np.ndarray, np.ndarray]
     needs = MachineCapabilities()
 
@@ -34,6 +34,8 @@ class ImgTransposeTransformation(DataTransformation):
         return data
 
     def transform_format(self, format):
-        if "numerical" in format["data_types"]:
-            format["data_types"]["numerical"]["transposed"] = True
+        if "image" in format["data_types"]["list"]:
+            array_as = np.array(format["data_types"]["list"]["image"]["size"])
+            rearranged = array_as[list(self.params["axes"])]
+            format["data_types"]["list"]["image"]["size"] = list(rearranged)
         return format

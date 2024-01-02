@@ -38,8 +38,13 @@ class InferenceManager:
         setup_conf = setup_loader.load_setup()
         # Load inferencer
         inferencer = setup_loader.load_inferencer(setup_conf["inference"]["inferencer"])()
-        # If not here, check if any additional available in the mounted cache
-        model = inferencer.load_model(load_path)
+        # Check if GPU should be used for inference
+        if "use_cuda" in setup_conf["inference"]:
+            device = setup_conf["inference"]["use_cuda"]
+            # If not here, check if any additional available in the mounted cache
+            model = inferencer.load_model(load_path, use_cuda=device)
+        else:
+            model = inferencer.load_model(load_path)
         loader.cleanup()
         model_data_format = model_conf["input_format"]
         inferencer.prepare(model, model_data_format)

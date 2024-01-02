@@ -24,9 +24,12 @@ class ReadImageBatch(DataTransformation):
         data = np.array(data)
         batch_size = data.shape[self.params["axis"]]
         data = np.split(data, batch_size, axis=self.params["axis"])
+        data = [np.squeeze(d) for d in data]
         return data
 
     def transform_format(self, format):
-        if "image" in format["data_types"]:
+        if "numerical" in format["data_types"]:
+            format["data_types"]["list"] = {}
             format["data_types"]["list"]["image"] = format["data_types"]["numerical"]
+        format["data_types"].pop("numerical")
         return format

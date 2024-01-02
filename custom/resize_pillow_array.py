@@ -1,9 +1,9 @@
 import numpy as np
 from data_transformation.transformation import DataTransformation
 from datamodels.models import MachineCapabilities
+from PIL import Image
 
-
-class ResizeNumpyArray(DataTransformation):
+class ResizePillowArray(DataTransformation):
     from typing import Tuple
     import numpy as np
 
@@ -13,7 +13,7 @@ class ResizeNumpyArray(DataTransformation):
     # here the values are in order of x, y, z, svm
     default_values = {"target_size":[1200, 900]}
     outputs = [np.ndarray]
-    needs = MachineCapabilities(preinstalled_libraries={"numpy": "1.23.5"})
+    needs = MachineCapabilities(preinstalled_libraries={"PIL": "9.3.0"})
 
     def set_parameters(self, parameters):
         self.params = parameters
@@ -23,8 +23,9 @@ class ResizeNumpyArray(DataTransformation):
 
     def transform_data(self, data):
         data = [data] if not isinstance(data, list) else data
-        data = [np.array(d) for d in data]
-        return [np.resize(d, self.params["target_size"]) for d in data]
+        data = [Image.fromarray(d) for d in data]
+        data = [d.resize(self.params["target_size"]) for d in data]
+        return [np.array(d) for d in data]
 
     def transform_format(self, format):
         if "image" in format["data_types"]:
