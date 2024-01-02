@@ -1,6 +1,6 @@
 [
     {
-        "id": "custom.postprocess_tensorflow_tensor",
+        "id": "custom.construct_car_damage_output_dictionary",
         "parameters": {}
     }
 ]

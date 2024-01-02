@@ -16,7 +16,7 @@ class TorchRCNNInferencer(BaseInferencer):
             if os.path.isfile(os.path.join(path, p)):
                 is_cuda = use_cuda and torch.cuda.is_available()
                 device = "cuda" if is_cuda else "cpu"
-                scratch = torch.load(model_path=os.path.join(path, p), map_location=torch.device(device))
+                scratch = torch.load(os.path.join(path, p), map_location=torch.device(device))
                 model = self.get_model_instance_segmentation()
                 model.load_state_dict(scratch['model_state_dict'])
                 model.eval()
@@ -39,7 +39,7 @@ class TorchRCNNInferencer(BaseInferencer):
         return outputs
     
     
-    def get_model_instance_segmentation(num_classes=2):
+    def get_model_instance_segmentation(self, num_classes=2):
         model = torchvision.models.detection.maskrcnn_resnet50_fpn_v2(weights=torchvision.models.detection.MaskRCNN_ResNet50_FPN_V2_Weights.DEFAULT)#pretrained=True)
 
         in_features = model.roi_heads.box_predictor.cls_score.in_features

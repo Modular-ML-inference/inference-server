@@ -9,7 +9,7 @@ inference_lock = threading.Lock()
 
 def serve():
     # initialize prometheus server
-    prometheus_client.start_http_server(9000)
+    prometheus_client.start_http_server(9033)
 
     # initialize server with 4 workers
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=200))
