@@ -2,7 +2,7 @@
     "data_types": {
         "tensor": {
             "size": [
-                5,
+                9,
                 3
             ],
             "normalized": false,
