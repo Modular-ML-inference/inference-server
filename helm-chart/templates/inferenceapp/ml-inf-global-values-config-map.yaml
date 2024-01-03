@@ -1,0 +1,7 @@
+kind: ConfigMap 
+apiVersion: v1 
+metadata:
+  name: ml-inf-global-values-config-map-{{ include "inferenceapp.fullname" . }}
+data:
+  # Configuration values can be set as key-value properties
+  REPOSITORY_ADDRESS: "http://flrepositorylocaldb2-flrepositorydb-flrepository.default.svc.cluster.local:9012"

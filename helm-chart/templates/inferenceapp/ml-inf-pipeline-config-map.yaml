@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ml-inf-pipeline-config-map-{{ include "inferenceapp.fullname" . }}
+data:
+  format.json: |
+    {
+    "data_types": {
+        "tensor": {
+            "size": [
+                9,
+                3
+            ],
+            "normalized": false,
+            "vector_length": false,
+            "unit": "tag"
+        }
+      }
+    }
+  model.json: |
+    {
+    "model_name": "fall-detection",
+    "model_version": "pilot-2-2",
+    "library": "tflite",
+    "input_format": {
+        "data_types": {
+            "numerical": {
+                "size": [
+                    1,
+                    9,
+                    4
+                ],
+                "normalized": true,
+                "vector_length": true,
+                "unit": "milligraviton"
+            }
+        }
+      }
+    }
+  preprocessing_pipeline.json: |
+    [
+    {
+        "id": "custom.preprocess_tensorflow_tensor",
+        "parameters": {}
+    },
+    {
+        "id": "custom.rescale_values_to_milli_gi",
+        "parameters": {}
+    },
+    {
+        "id": "custom.compute_vector_length",
+        "parameters": {}
+    },
+    {
+        "id": "custom.merge_as_column",
+        "parameters": {}
+    },
+    {
+        "id": "inference_application.custom.basic_norm",
+        "parameters": {"mean": [-1082.609691, -152.626047, -125.434036, 1478.656414],
+    "std": [1049.907620, 556.064008, 780.038308, 1022.058601]}
+    },
+    {
+        "id": "inference_application.custom.expansion",
+        "parameters": {
+            "axis": 0
+        }
+    }
+    ]
+  postprocessing_pipeline.json: |
+    [
+      {
+        "id": "custom.postprocess_tensorflow_tensor",
+        "parameters": {}
+      }
+    ]
+  setup.json: |
+    {
+    "service": {
+        "modules": [
+            "custom",
+            "inference_application.code.protocompiled.extended_inference_pb2",
+            "inference_application.code.protocompiled.extended_inference_pb2_grpc",
+            "inference_application.code.services.extended_inference_svc"
+        ],
+        "method": "extended-inf-method-protocompiled",
+        "servicer": "extended-inf-svc"
+    },
+    "inference": {
+        "inferencer": "inference_application.code.inferencers.tflite_inferencer"
+    }
+    }

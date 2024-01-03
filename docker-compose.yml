@@ -8,8 +8,6 @@ services:
       dockerfile: "Dockerfile"
     environment:
       - REPOSITORY_ADDRESS=http://flrepository:9012
-    networks:
-      - default
     ports:
       - "50052:50051"
       - "9001:9000"

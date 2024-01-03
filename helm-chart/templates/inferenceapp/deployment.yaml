@@ -57,9 +57,9 @@ spec:
       securityContext:
         {{- toYaml .Values.inferenceapp.podSecurityContext | nindent 8 }}
       volumes:
-        - name: flinference-config-map-volume
+        - name: ml-inf-pipeline-config-map-volume
           configMap:
-            name: flinference-config-map-{{ include "inferenceapp.fullname" . }}
+            name: ml-inf-pipeline-config-map-{{ include "inferenceapp.fullname" . }}
         {{- if .Values.inferenceapp.custom_setup }}
         - name: custom
           persistentVolumeClaim:
@@ -73,7 +73,7 @@ spec:
           imagePullPolicy: {{ .Values.inferenceapp.image.pullPolicy }}
           volumeMounts:
           - mountPath: /code/inference_application/configurations
-            name: flinference-config-map-volume
+            name: ml-inf-pipeline-config-map-volume
           {{- if .Values.inferenceapp.custom_setup }}
           - mountPath: /code/inference_application/local_cache
             name: custom
@@ -85,4 +85,4 @@ spec:
             {{- toYaml .Values.inferenceapp.resources | nindent 12 }}
           envFrom:
             - configMapRef:
-                name: fllocalops-config-map-{{ include "inferenceapp.fullname" . }}
+                name: ml-inf-global-values-config-map-{{ include "inferenceapp.fullname" . }}
