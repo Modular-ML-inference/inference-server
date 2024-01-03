@@ -1,4 +1,6 @@
 [
+    {"id": "custom.filter_outputs",
+    "parameters": {}},
     {
         "id": "custom.construct_car_damage_output_dictionary",
         "parameters": {}

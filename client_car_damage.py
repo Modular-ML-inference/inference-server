@@ -34,4 +34,4 @@ with grpc.insecure_channel('localhost:50052', options=options) as channel:
     for response in response_iterator:
         print(tf.make_ndarray(response.output["results"]))
 
-    # You should get results [2 0 3 0] for the first dataset, I will also prepare version of this for the new dataset ASAP
+    # You should get results [1 0 1 0] for the modified pipeline

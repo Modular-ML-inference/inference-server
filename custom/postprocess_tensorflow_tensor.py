@@ -30,6 +30,4 @@ class PostprocessTensorflowTensor(DataTransformation):
         return data
 
     def transform_format(self, format):
-        if "numerical" in format["data_types"]:
-            format["data_types"]["numerical"]["normalized"] = True
         return format

@@ -13,7 +13,7 @@ class ImgTransposeTransformation(DataTransformation):
     parameter_types = {"axes": Tuple[int]}
     default_values = {"axes": (2,0, 1)}
     outputs = [np.ndarray, np.ndarray]
-    needs = MachineCapabilities()
+    needs = MachineCapabilities(preinstalled_libraries={"numpy": "1.23.5"})
 
     def __init__(self):
         self.params = self.default_values
