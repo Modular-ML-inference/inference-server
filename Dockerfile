@@ -2,6 +2,7 @@ FROM python:3.11-slim
 WORKDIR /code
 COPY inference_application/requirements.txt /code/requirements.txt
 RUN /usr/local/bin/python -m pip install --upgrade pip && pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN pip install torch torchvision torchaudio
 COPY inference_application/ /code/inference_application
 COPY data_transformation/ /code/data_transformation
 COPY datamodels/ /code/datamodels
