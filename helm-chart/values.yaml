@@ -14,7 +14,7 @@ inferenceapp:
   tier: internal
   custom_setup: False
   image:
-    repository: karola766/fl_local_operations_inference
+    repository: bogkar/fl_local_operations_inference
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
