@@ -1,16 +1,18 @@
 import grpc
 from concurrent import futures
 import prometheus_client
+import threading
 
 from inference_application.code.service_manager import ServiceManager
 
+inference_lock = threading.Lock()
 
 def serve():
     # initialize prometheus server
     prometheus_client.start_http_server(9000)
 
     # initialize server with 4 workers
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=4))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=200))
 
     # The setup of the service is flexible and can be seen more thoroughly in classes ServiceManager and InferenceSetupLoader
     ServiceManager().setup_service(server)
