@@ -1,8 +1,10 @@
-from inference_application.code.protocompiled.extended_inference_pb2_grpc import add_ExtendedInferenceServiceServicer_to_server
 from inference_application.code.utils import InferenceSetupLoader
 
 
 class ServiceManager:
+    '''
+    A manager class, that is responsible for loading the services.
+    '''
 
     def setup_service(self, server):
         """
@@ -12,7 +14,8 @@ class ServiceManager:
         setup_loader = InferenceSetupLoader()
         setup_conf = setup_loader.load_setup()
         # Check availability
-        setup_loader.check_service_availability(setup_conf["service"]["servicer"])
+        setup_loader.check_service_availability(
+            setup_conf["service"]["servicer"])
         # Load modules
         setup_loader.load_modules(setup_conf["service"]["modules"])
         # If loaded, load method

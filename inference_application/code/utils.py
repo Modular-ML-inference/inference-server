@@ -13,10 +13,14 @@ import numpy as np
 import dill
 from data_transformation.exceptions import TransformationConfigurationInvalidException
 from data_transformation.loader import ModelLoader
-from inference_application.config import REPOSITORY_ADDRESS, if_env
+from inference_application.config import if_env
 
+TIMEOUT = 600
 
 class InferenceModelLoader(ModelLoader):
+    '''
+    Loader class responsible for models. Loads them from the Component Repository and from the local_cache directory
+    '''
 
     temp_dir = "temp"
     config_path = os.path.join(
@@ -29,6 +33,9 @@ class InferenceModelLoader(ModelLoader):
         self.rep_name = rep_name
 
     def check_library(self, model_name, model_version):
+        '''
+        Check which library is required to open the model.
+        '''
         if os.path.isfile(self.config_path):
             with open(self.config_path, 'rb') as f:
                 model_data = json.load(f)
@@ -37,7 +44,7 @@ class InferenceModelLoader(ModelLoader):
             # If not in local files, check repository
             with requests.get(f"{self.rep_name}/model/meta",
                               params={"model_name": model_name,
-                                      "model_version": model_version}) \
+                                      "model_version": model_version}, timeout=TIMEOUT) \
                     as r:
                 return r.json()["meta"]["library"]
 
@@ -52,6 +59,9 @@ class InferenceModelLoader(ModelLoader):
             return temp
 
     def check_configuration(self):
+        '''
+        Get model configuration
+        '''
         if os.path.isfile(self.config_path):
             with open(self.config_path, 'rb') as f:
                 model_data = json.load(f)
@@ -77,7 +87,7 @@ class InferenceModelLoader(ModelLoader):
         else:
             with requests.get(f"{self.rep_name}/model"
                               f"/{model_name}/{model_version}",
-                              stream=True) as r:
+                              stream=True, timeout=TIMEOUT) as r:
                 with open(f'{self.temp_dir}.zip', 'wb') as f:
                     shutil.copyfileobj(r.raw, f)
             with ZipFile(f'{self.temp_dir}.zip', 'r') as zipObj:
@@ -92,6 +102,9 @@ class InferenceModelLoader(ModelLoader):
 
 
 class InferenceTransformationLoader:
+    '''
+    Loader class responsible for data transformations. Loads them from the Component Repository and from the local_cache directory.
+    '''
     temp_dir = "temp"
     pre_config_path = os.path.join(
         "inference_application", "configurations", "preprocessing_pipeline.json")
@@ -104,15 +117,18 @@ class InferenceTransformationLoader:
     def __init__(self, rep_name=if_env('REPOSITORY_ADDRESS')):
         self.rep_name = rep_name
 
-    def load_transformation(self, id):
-        trans_path = os.path.join(self.local_files, f'{id}.pkl')
+    def load_transformation(self, trans_id):
+        '''
+        Load the transformation, including the model in which the transformation is located.
+        '''
+        trans_path = os.path.join(self.local_files, f'{trans_id}.pkl')
         ephem_path = f'{self.temp_dir}.zip'
         try:
             if not os.path.isfile(trans_path):
                 # if the right file is not here, try to download it
                 try:
                     with requests.get(f"{self.rep_name}/transformation"
-                                      f"/{id}", stream=True) as r:
+                                      f"/{trans_id}", stream=True, timeout=TIMEOUT) as r:
                         with open(ephem_path, 'wb') as f:
                             shutil.copyfileobj(r.raw, f)
                     # First we extract all the downloaded files to the cache dir
@@ -123,21 +139,24 @@ class InferenceTransformationLoader:
                     # we have to cleanup
                     self.cleanup()
                 except BaseException as e:
-                    raise TransformationConfigurationInvalidException(id)
-            m_path = os.path.join(self.local_files, f'{id}.zip')
+                    raise TransformationConfigurationInvalidException(trans_id) from e
+            m_path = os.path.join(self.local_files, f'{trans_id}.zip')
             with zipfile.ZipFile(m_path, mode="r") as archive:
                 archive.printdir()
-                z = archive.infolist()
+                archive.infolist()
             importer = zipimport.zipimporter(m_path)
-            importer.load_module(id)
+            importer.exec_module(trans_id)
             sys.path.insert(0, m_path)
             with open(trans_path, 'rb') as f:
                 transformation = dill.load(f)
                 return transformation()
         except BaseException as e:
-            raise TransformationConfigurationInvalidException(id)
+            raise TransformationConfigurationInvalidException(trans_id) from e
 
     def cleanup(self):
+        '''
+        Clean up after dynamically loading the transformation from the Component Repository
+        '''
         if os.path.exists(self.temp_dir):
             shutil.rmtree(f'{self.temp_dir}')
         if os.path.exists(f'{self.temp_dir}.zip'):
@@ -163,6 +182,9 @@ class InferenceTransformationLoader:
 
 
 class InferenceFormatLoader:
+    '''
+    An object responsible for loading the format.
+    '''
 
     config_path = os.path.join(
         "inference_application", "configurations", "format.json")
@@ -174,9 +196,10 @@ class InferenceFormatLoader:
                 model_data = json.load(f)
                 return model_data
 
-    def save_format(self, format):
-        with open(self.config_path, 'wb') as f:
-            json.dump(format, self.config_path)
+    def save_format(self, data_format):
+        '''Save the current format as the input format'''
+        with open(self.config_path, 'wb'):
+            json.dump(data_format, self.config_path)
 
 
 def reconstruct_shape(data, shape):
@@ -199,6 +222,9 @@ def deconstruct_shape(inference):
 
 
 class InferenceSetupLoader:
+    '''
+    A loader responsible for the general setup, that is, the server, the inferencers and other extra modules.
+    '''
 
     temp_dir = "temp"
     config_path = os.path.join(
@@ -216,14 +242,17 @@ class InferenceSetupLoader:
                 setup_data = json.load(f)
                 return setup_data
             
-    def check_service_availability(self, id):
-        serv_path = os.path.join(self.service_path, f'{id}.pkl')
+    def check_service_availability(self, service_id):
+        '''
+        Check, whether the servicer has been already downloaded locally.
+        '''
+        serv_path = os.path.join(self.service_path, f'{service_id}.pkl')
         ephem_path = f'{self.temp_dir}.zip'
         if not os.path.isfile(serv_path):
             # if the right file is not here, try to download it
             try:
                 with requests.get(f"{self.rep_name}/service"
-                                      f"/{id}", stream=True) as r:
+                                      f"/{service_id}", stream=True, timeout=TIMEOUT) as r:
                     with open(ephem_path, 'wb') as f:
                         shutil.copyfileobj(r.raw, f)
                     # First we extract all the downloaded files to the cache dir
@@ -234,29 +263,35 @@ class InferenceSetupLoader:
                     # we have to cleanup
                 self.cleanup()
             except BaseException as e:
-                raise TransformationConfigurationInvalidException(id)
+                raise TransformationConfigurationInvalidException(service_id) from e
                 
-    def check_inferencer_availability(self, id):
-        inf_path = os.path.join(self.inference_path, f'{id}.pkl')
+    def check_inferencer_availability(self, inferencer_id):
+        '''
+        Check, whether the inferencer has been already downloaded locally.
+        '''
+        inf_path = os.path.join(self.inference_path, f'{inferencer_id}.pkl')
         ephem_path = f'{self.temp_dir}.zip'
         if not os.path.isfile(inf_path):
             # if the right file is not here, try to download it
             try:
                 with requests.get(f"{self.rep_name}/inferencer"
-                                      f"/{id}", stream=True) as r:
+                                      f"/{inferencer_id}", stream=True, timeout=TIMEOUT) as r:
                     with open(ephem_path, 'wb') as f:
                             shutil.copyfileobj(r.raw, f)
                 # First we extract all the downloaded files to the cache dir
-                with ZipFile(ephem_path, 'r') as zipObj:
-                        # Extract all the contents of zip file in current transformations directory
-                    zipObj.extractall(inf_path)
-                # now, since we have extracted everything to the transformations
+                with ZipFile(ephem_path, 'r') as zip_obj:
+                    # Extract all the contents of zip file in current inferencers directory
+                    zip_obj.extractall(inf_path)
+                # now, since we have extracted everything to the inferencers
                 # we have to cleanup
                 self.cleanup()
-            except BaseException:
-                raise TransformationConfigurationInvalidException(id)
+            except BaseException as exc:
+                raise TransformationConfigurationInvalidException(inferencer_id) from exc
                 
     def cleanup(self):
+        '''
+        A function that cleans up after the dynamic download from Component Repository.
+        '''
         if os.path.exists(self.temp_dir):
             shutil.rmtree(f'{self.temp_dir}')
         if os.path.exists(f'{self.temp_dir}.zip'):
@@ -272,9 +307,9 @@ class InferenceSetupLoader:
             m_path = os.path.join(self.service_path, f'{module}.zip')
             with zipfile.ZipFile(m_path, mode="r") as archive:
                 archive.printdir()
-                z = archive.infolist()
+                archive.infolist()
             importer = zipimport.zipimporter(m_path)
-            importer.load_module(module)
+            importer.exec_module(module)
             sys.path.insert(0, m_path)
 
     def load_method(self, method_name):
@@ -304,7 +339,7 @@ class InferenceSetupLoader:
         with zipfile.ZipFile(m_path, mode="r") as archive:
             archive.printdir()
         importer = zipimport.zipimporter(m_path)
-        importer.load_module(inferencer)
+        importer.exec_module(inferencer)
         sys.path.insert(0, m_path)
         # Then pickled object
         o_path = os.path.join(self.inference_path, f'{inferencer}.pkl')

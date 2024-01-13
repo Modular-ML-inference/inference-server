@@ -6,7 +6,7 @@ from inference_application.code.main import inference_lock
 INFERENCE_REQUEST_TIME = Summary(
     'inference_request_processing_seconds', 'Time spent processing request')
 h = Histogram('inference_request_latency_seconds',
-              'Histogram for request processing of FL inference')
+              'Histogram for request processing of ML inference')
 
 
 class ExtendedInferenceService(extended_inference_pb2_grpc.ExtendedInferenceServiceServicer):
@@ -28,9 +28,11 @@ class ExtendedInferenceService(extended_inference_pb2_grpc.ExtendedInferenceServ
                 input_data = self.inference_manager.preprocessing_pipeline.transform_data(
                     request)
                 # Here, we will call the inference manager and get the global inferencer for prediction
-                prediction = self.inference_manager.inferencer.predict(input_data)
-                output = self.inference_manager.postprocessing_pipeline.transform_data(prediction)
+                prediction = self.inference_manager.inferencer.predict(
+                    input_data)
+                output = self.inference_manager.postprocessing_pipeline.transform_data(
+                    prediction)
                 response = extended_inference_pb2.ExtendedInferenceResponse(id=int(request.id),
-                                                                    output=output)
+                                                                            output=output)
                 # stream the response back
                 yield response

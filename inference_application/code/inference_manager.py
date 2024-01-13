@@ -1,6 +1,3 @@
-
-from logging import INFO, log
-import logging
 from data_transformation.exceptions import TransformationPipelineConfigurationInsufficientException
 from data_transformation.pipeline import BaseTransformationPipeline
 from prometheus_client import Summary
@@ -16,8 +13,8 @@ library_inferencers = {
 class InferenceManager:
 
     def load_data_format(self):
-        format = InferenceFormatLoader().load_format()
-        return format
+        data_format = InferenceFormatLoader().load_format()
+        return data_format
 
     def load_preprocessing_pipeline(self):
         transformation_list = InferenceTransformationLoader().load_from_config()
