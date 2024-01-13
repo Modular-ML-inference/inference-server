@@ -5,55 +5,65 @@ metadata:
 data:
   format.json: |
     {
-    "data_types": {
-            "tensor": {
-                "size": [
-                    4,
-                    900,
-                    1200,
-                    3
-                ]
-    
-            }
+      "data_types": {
+          "tensor": {
+              "size": [
+                4,
+                900,
+                1200,
+                3
+            ]
         }
+    }
     }
   model.json: |
     {
-    "model_name": "car-damage",
-    "model_version": "pilot-3-1",
-    "library": "torch",
-    "input_format": {"data_types": 
-    {"list": 
-    {"torch-tensor": 
-    {"size": [1200, 4, 900]}}}}
+      "model_name": "car-damage",
+      "model_version": "pilot-3-1",
+      "library": "torch",
+      "input_format": {
+          "data_types": {
+            "list": {
+                "torch-tensor": {
+                    "size": [
+                        1200,
+                        4,
+                        900
+                    ]
+                }
+            }
+        }
+    }
     }
   preprocessing_pipeline.json: |
     [
-    {
+      {
         "id": "custom.preprocess_tensorflow_tensor",
         "parameters": {}
-    },
-    {
+      },
+      {
         "id": "custom.read_image_batch",
         "parameters": {}
-    },
-    {
+      },
+      {
         "id": "custom.img_transpose",
         "parameters": {}
-    },
-    {
+      },
+      {
         "id": "custom.ndarray_to_torch_tensor",
         "parameters": {}
-    }
+      }
     ]
   postprocessing_pipeline.json: |
     [
-    {"id": "custom.filter_outputs",
-    "parameters": {}},
-    {
+      {
+        "id": "custom.filter_outputs",
+        "parameters": {}
+      },
+      {
         "id": "custom.construct_car_damage_output_dictionary",
         "parameters": {}
-    }
+      }
     ]
   setup.json: |
     {

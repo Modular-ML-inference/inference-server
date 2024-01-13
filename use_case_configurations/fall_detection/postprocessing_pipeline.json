@@ -1,0 +1,6 @@
+[
+    {
+        "id": "custom.postprocess_tensorflow_tensor",
+        "parameters": {}
+    }
+]

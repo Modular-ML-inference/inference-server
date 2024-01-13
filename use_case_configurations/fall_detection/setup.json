@@ -1,0 +1,15 @@
+{
+    "service": {
+        "modules": [
+            "custom",
+            "inference_application.code.protocompiled.extended_inference_pb2",
+            "inference_application.code.protocompiled.extended_inference_pb2_grpc",
+            "inference_application.code.services.extended_inference_svc"
+        ],
+        "method": "extended-inf-method-protocompiled",
+        "servicer": "extended-inf-svc"
+    },
+    "inference": {
+        "inferencer": "inference_application.code.inferencers.tflite_inferencer"
+    }
+}
