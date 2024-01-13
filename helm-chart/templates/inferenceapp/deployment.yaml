@@ -65,8 +65,6 @@ spec:
           persistentVolumeClaim:
             claimName: custom-code-claim-inf-{{ include "inferenceapp.fullname" . }}
         {{- end}}
-      imagePullSecrets:
-          - name: my-registry-secret2
       containers:
         - name: inferenceapp
           securityContext:

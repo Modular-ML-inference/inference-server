@@ -36,6 +36,8 @@ class InferenceManager:
         load_path = loader.check_nested_path(loader.temp_dir)
         setup_loader = InferenceSetupLoader()
         setup_conf = setup_loader.load_setup()
+        # Check inferenceravailability
+        setup_loader.check_inferencer_availability(setup_conf["inference"]["inferencer"])
         # Load inferencer
         inferencer = setup_loader.load_inferencer(setup_conf["inference"]["inferencer"])()
         # Check if GPU should be used for inference

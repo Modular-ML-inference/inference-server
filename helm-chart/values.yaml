@@ -37,7 +37,9 @@ inferenceapp:
   # The specification of the resources is needed for the proper functioning 
   # of the Smart Orchestrator enabler (requests)
   # and of the Resource provisioning enabler (limits)
-  resources: {}
+  resources: 
+    limits:
+      nvidia.com/gpu: 1
     # limits:
     #   cpu: 100m
     #   memory: 128Mi
@@ -70,7 +72,8 @@ inferenceapp:
   # Here and in the manifest is included an example.
 
 
-  imagePullSecrets: []
+  imagePullSecrets:
+  - name: regcred
   nodeSelector: {}
   tolerations: []
   affinity: {}

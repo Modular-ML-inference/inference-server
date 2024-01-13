@@ -13,4 +13,10 @@ services:
       - "9001:9000"
     extra_hosts:
       - "host.docker.internal:host-gateway"
-
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              count: all

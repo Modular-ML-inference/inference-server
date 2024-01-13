@@ -60,7 +60,7 @@ class InferenceModelLoader(ModelLoader):
     def load_format(self, model_name, model_version):
         '''Load the data format accepted by the model'''
         local_file_path = os.path.join(
-            local_file_path, model_name, f'{model_version}.zip')
+            self.local_files, model_name, f'{model_version}.zip')
         if os.path.isfile(local_file_path) and os.path.isfile(self.config_path):
             with open(self.config_path, 'rb') as f:
                 model_data = json.load(f)
@@ -200,14 +200,14 @@ def deconstruct_shape(inference):
 
 class InferenceSetupLoader:
 
+    temp_dir = "temp"
     config_path = os.path.join(
         "inference_application", "configurations", "setup.json")
-    module_path = os.path.join(
-        "inference_application", "local_cache", "protocompiled")
     service_path = os.path.join(
         "inference_application", "local_cache", "services")
     inference_path = os.path.join(
         "inference_application", "local_cache", "inferencers")
+    rep_name = if_env('REPOSITORY_ADDRESS')
 
     def load_setup(self):
         '''Load the setup of the inferencer'''
@@ -215,6 +215,52 @@ class InferenceSetupLoader:
             with open(self.config_path, 'rb') as f:
                 setup_data = json.load(f)
                 return setup_data
+            
+    def check_service_availability(self, id):
+        serv_path = os.path.join(self.service_path, f'{id}.pkl')
+        ephem_path = f'{self.temp_dir}.zip'
+        if not os.path.isfile(serv_path):
+            # if the right file is not here, try to download it
+            try:
+                with requests.get(f"{self.rep_name}/service"
+                                      f"/{id}", stream=True) as r:
+                    with open(ephem_path, 'wb') as f:
+                        shutil.copyfileobj(r.raw, f)
+                    # First we extract all the downloaded files to the cache dir
+                with ZipFile(ephem_path, 'r') as zipObj:
+                        # Extract all the contents of zip file in current service directory
+                    zipObj.extractall(self.service_path)
+                    # now, since we have extracted everything to the services
+                    # we have to cleanup
+                self.cleanup()
+            except BaseException as e:
+                raise TransformationConfigurationInvalidException(id)
+                
+    def check_inferencer_availability(self, id):
+        inf_path = os.path.join(self.inference_path, f'{id}.pkl')
+        ephem_path = f'{self.temp_dir}.zip'
+        if not os.path.isfile(inf_path):
+            # if the right file is not here, try to download it
+            try:
+                with requests.get(f"{self.rep_name}/inferencer"
+                                      f"/{id}", stream=True) as r:
+                    with open(ephem_path, 'wb') as f:
+                            shutil.copyfileobj(r.raw, f)
+                # First we extract all the downloaded files to the cache dir
+                with ZipFile(ephem_path, 'r') as zipObj:
+                        # Extract all the contents of zip file in current transformations directory
+                    zipObj.extractall(inf_path)
+                # now, since we have extracted everything to the transformations
+                # we have to cleanup
+                self.cleanup()
+            except BaseException:
+                raise TransformationConfigurationInvalidException(id)
+                
+    def cleanup(self):
+        if os.path.exists(self.temp_dir):
+            shutil.rmtree(f'{self.temp_dir}')
+        if os.path.exists(f'{self.temp_dir}.zip'):
+            os.remove(f'{self.temp_dir}.zip')
 
     def load_modules(self, module_list):
         """
@@ -223,7 +269,7 @@ class InferenceSetupLoader:
         Module packages should be named after the modules to load. 
         """
         for module in module_list:
-            m_path = os.path.join(self.module_path, f'{module}.zip')
+            m_path = os.path.join(self.service_path, f'{module}.zip')
             with zipfile.ZipFile(m_path, mode="r") as archive:
                 archive.printdir()
                 z = archive.infolist()
@@ -236,7 +282,7 @@ class InferenceSetupLoader:
         We have to then load method from the pkl file defined in the method section of the service config in setup.
         This file should be placed in local_cache in the protocompiled folder.
         """
-        method_path = os.path.join(self.module_path, f'{method_name}.pkl')
+        method_path = os.path.join(self.service_path, f'{method_name}.pkl')
         with open(method_path, 'rb') as f:
             method = dill.load(f)
         return method
