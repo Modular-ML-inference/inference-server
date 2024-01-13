@@ -12,7 +12,7 @@
                 ],
                 "normalized": true,
                 "vector_length": true,
-                "unit": "milligraviton"
+                "unit": "millig"
             }
         }
     }

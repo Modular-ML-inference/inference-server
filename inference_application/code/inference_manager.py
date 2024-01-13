@@ -7,7 +7,7 @@ from prometheus_client import Summary
 from inference_application.code.inferencers.tflite_inferencer import TFLiteInferencer
 from inference_application.code.utils import InferenceFormatLoader, InferenceModelLoader, InferenceSetupLoader, InferenceTransformationLoader
 
-TFLITE_PREPARATION_TIME = Summary('tflite_inference_pipeline_preparation_seconds', 'Time needed to set up TFLite inferencer')
+PREPARATION_TIME = Summary('inference_pipeline_preparation_seconds', 'Time needed to set up the inferencer')
 
 library_inferencers = {
     "tflite": TFLiteInferencer
@@ -55,7 +55,7 @@ class InferenceManager:
     def __init__(self):
         self.prepare_inference()
 
-    @TFLITE_PREPARATION_TIME.time()
+    @PREPARATION_TIME.time()
     def prepare_inference(self):
         # Load up all elements
         data_format = self.load_data_format()

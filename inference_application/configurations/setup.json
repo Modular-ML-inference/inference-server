@@ -10,7 +10,6 @@
         "servicer": "extended-inf-svc"
     },
     "inference": {
-        "inferencer": "inference_application.code.inferencers.torch_rcnn_inferencer",
-        "use_cuda": true
+        "inferencer": "inference_application.code.inferencers.tflite_inferencer"
     }
 }

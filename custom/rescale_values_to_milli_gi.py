@@ -31,5 +31,5 @@ class RescaleValuesToMilliGi(DataTransformation):
 
     def transform_format(self, format):
         if "numerical" in format["data_types"]:
-            format["data_types"]["numerical"]["unit"] = "milligraviton"
+            format["data_types"]["numerical"]["unit"] = "millig"
         return format

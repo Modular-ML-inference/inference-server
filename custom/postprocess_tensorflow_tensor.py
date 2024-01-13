@@ -26,7 +26,7 @@ class PostprocessTensorflowTensor(DataTransformation):
         return self.params
 
     def transform_data(self, data):
-        data = tf.make_tensor_proto(values = data)
+        data = {"prediction": tf.make_tensor_proto(values = data)}
         return data
 
     def transform_format(self, format):

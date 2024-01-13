@@ -4,15 +4,26 @@
         "parameters": {}
     },
     {
-        "id": "custom.read_image_batch",
+        "id": "custom.rescale_values_to_milli_gi",
         "parameters": {}
     },
     {
-        "id": "custom.img_transpose",
+        "id": "custom.compute_vector_length",
         "parameters": {}
     },
     {
-        "id": "custom.ndarray_to_torch_tensor",
+        "id": "custom.merge_as_column",
         "parameters": {}
+    },
+    {
+        "id": "inference_application.custom.basic_norm",
+        "parameters": {"mean": [-1082.609691, -152.626047, -125.434036, 1478.656414],
+    "std": [1049.907620, 556.064008, 780.038308, 1022.058601]}
+    },
+    {
+        "id": "inference_application.custom.expansion",
+        "parameters": {
+            "axis": 0
+        }
     }
 ]

@@ -1,17 +1,18 @@
 {
-    "model_name": "car-damage",
-    "model_version": "pilot-3-1",
-    "library": "torch",
+    "model_name": "fall-detection",
+    "model_version": "pilot-2-2",
+    "library": "tflite",
     "input_format": {
         "data_types": {
-            "list": {
-                "torch-tensor": {
-                    "size": [
-                        1200,
-                        4,
-                        900
-                    ]
-                }
+            "numerical": {
+                "size": [
+                    1,
+                    9,
+                    4
+                ],
+                "normalized": true,
+                "vector_length": true,
+                "unit": "millig"
             }
         }
     }
