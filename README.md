@@ -167,6 +167,9 @@ only modify the configuration.
 
 The Prometheus metrics are available for scraping on the port `9000` without any additional url path changes in the inferenceapp.
 
+## Author
+
+[Karolina Bogacka](https://orcid.org/0000-0002-7109-891X) ([GitHub](https://github.com/Karolina-Bogacka))
 
 ## Licensing
 
