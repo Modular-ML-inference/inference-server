@@ -10,7 +10,7 @@ To make sure that before that the enabler has been configured properly, check th
 
 The first, which name starts with `ml-inf-pipeline-config-map-`, serves to flexibly set and change the configuration for the inference component, including the data format received by the gRPC service (as `format.json`), the name, version and input format of the model (as `model.json`), the configuration of the preprocessing as well as postprocessing data transformation pipelines (as `transformation_pipeline.json` and respectively) and the data about both the serialized gRPC service and the specific inferencer to be used (as `setup.json`).
 
-The second config map, which name begins with `ml-inf-global-values-config-map- contains the environmental variables necessary to deploy the FL Local Operations instance. Check especially the fields of `REPOSITORY_ADDRESS` (the address of the nearest FL Repository instance). If you change something in the ConfigMap when the enabler is already deployed, destroy the inferenceapp pod to let them recreate with the updated configuration.
+The second config map, which name begins with `ml-inf-global-values-config-map-` contains the environmental variables necessary to deploy the FL Local Operations instance. Check especially the fields of `REPOSITORY_ADDRESS` (the address of the nearest FL Repository instance). If you change something in the ConfigMap when the enabler is already deployed, destroy the inferenceapp pod to let them recreate with the updated configuration.
 
 ## Docker image
 
