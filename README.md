@@ -1,6 +1,6 @@
 # Modular Inference Server
 
-The Modular Inference Server has been developed as a part of the [ASSIST-IoT project](https://assist-iot.eu/). It enables the local inference deployment of a selected model (that can function as a standalone container), the use of flexible configurations, basic format verification and pluggable components. The Modular Inference Server is compatible with Prometheus metric monitoring. 
+The Modular Inference Server has been developed as a part of the [ASSIST-IoT project](https://assist-iot.eu/). It enables the local inference deployment of a selected model (that can function as a standalone container), the use of flexible configurations, basic format verification and pluggable components. The Modular Inference Server is compatible with Prometheus metric monitoring. Modular Inference Server forms the basis for the paper ["Flexible Deployment of Machine Learning Inference Pipelines in the Cloud–Edge–IoT Continuum"](https://www.mdpi.com/2079-9292/13/10/1888). 
 
 ## Helm chart
 
@@ -170,6 +170,10 @@ The Prometheus metrics are available for scraping on the port `9000` without any
 ## Citation
 
 If you found the Modular Inference Server useful in your research, please consider starring ⭐ us on GitHub and citing 📚 us in your research!
+
+```
+Bogacka, K.; Sowiński, P.; Danilenka, A.; Biot, F.M.; Wasielewska-Michniewska, K.; Ganzha, M.; Paprzycki, M.; Palau, C.E. Flexible Deployment of Machine Learning Inference Pipelines in the Cloud–Edge–IoT Continuum. Electronics 2024, 13, 1888. https://doi.org/10.3390/electronics13101888 
+```
 
 ```bibtex
 @Article{electronics13101888,
