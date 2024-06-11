@@ -172,7 +172,9 @@ The Prometheus metrics are available for scraping on the port `9000` without any
 If you found the Modular Inference Server useful in your research, please consider starring ⭐ us on GitHub and citing 📚 us in your research!
 
 ```
-Bogacka, K.; Sowiński, P.; Danilenka, A.; Biot, F.M.; Wasielewska-Michniewska, K.; Ganzha, M.; Paprzycki, M.; Palau, C.E. Flexible Deployment of Machine Learning Inference Pipelines in the Cloud–Edge–IoT Continuum. Electronics 2024, 13, 1888. https://doi.org/10.3390/electronics13101888 
+Bogacka, K.; Sowiński, P.; Danilenka, A.; Biot, F.M.; Wasielewska-Michniewska, K.; Ganzha, M.; Paprzycki, M.; Palau, C.E.
+Flexible Deployment of Machine Learning Inference Pipelines in the Cloud–Edge–IoT Continuum.
+Electronics 2024, 13, 1888. https://doi.org/10.3390/electronics13101888 
 ```
 
 ```bibtex
