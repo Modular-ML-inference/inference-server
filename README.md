@@ -167,6 +167,27 @@ only modify the configuration.
 
 The Prometheus metrics are available for scraping on the port `9000` without any additional url path changes in the inferenceapp.
 
+## Citation
+
+If you found the Modular Inference Server useful in your research, please consider starring ⭐ us on GitHub and citing 📚 us in your research!
+
+```bibtex
+@Article{electronics13101888,
+AUTHOR = {Bogacka, Karolina and Sowiński, Piotr and Danilenka, Anastasiya and Biot, Francisco Mahedero and Wasielewska-Michniewska, Katarzyna and Ganzha, Maria and Paprzycki, Marcin and Palau, Carlos E.},
+TITLE = {Flexible Deployment of Machine Learning Inference Pipelines in the Cloud–Edge–IoT Continuum},
+JOURNAL = {Electronics},
+VOLUME = {13},
+YEAR = {2024},
+NUMBER = {10},
+ARTICLE-NUMBER = {1888},
+URL = {https://www.mdpi.com/2079-9292/13/10/1888},
+ISSN = {2079-9292},
+ABSTRACT = {Currently, deploying machine learning workloads in the Cloud–Edge–IoT continuum is challenging due to the wide variety of available hardware platforms, stringent performance requirements, and the heterogeneity of the workloads themselves. To alleviate this, a novel, flexible approach for machine learning inference is introduced, which is suitable for deployment in diverse environments—including edge devices. The proposed solution has a modular design and is compatible with a wide range of user-defined machine learning pipelines. To improve energy efficiency and scalability, a high-performance communication protocol for inference is propounded, along with a scale-out mechanism based on a load balancer. The inference service plugs into the ASSIST-IoT reference architecture, thus taking advantage of its other components. The solution was evaluated in two scenarios closely emulating real-life use cases, with demanding workloads and requirements constituting several different deployment scenarios. The results from the evaluation show that the proposed software meets the high throughput and low latency of inference requirements of the use cases while effectively adapting to the available hardware. The code and documentation, in addition to the data used in the evaluation, were open-sourced to foster adoption of the solution.},
+DOI = {10.3390/electronics13101888}
+}
+
+```
+
 ## Author
 
 [Karolina Bogacka](https://orcid.org/0000-0002-7109-891X) ([GitHub](https://github.com/Karolina-Bogacka))
